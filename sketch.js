@@ -22,13 +22,12 @@ let areaCounter = 1;
 // ITMES
 // Weapons
 let weapons = new Map();
-let currentDurability = 10;
-weapons.set("Stick", [50, "brown", [currentDurability, 10]]);
-weapons.set("Wooden Sword", [150, "red", [currentDurability, 12]]);
-weapons.set("Rusty Kitchen Knife", [400, "yellow", [currentDurability, 7]]);
-weapons.set("Sharp Blade", [700, "silver", [currentDurability, 8]]);
-weapons.set("Crystal Sword", [1500, "blue", [currentDurability, 6]]);
-weapons.set("Ancient Stone Sword", [3000, "grey", [currentDurability, 20]]);
+weapons.set("Stick", [50, "brown"]);
+weapons.set("Wooden Sword", [150, "red"]);
+weapons.set("Rusty Kitchen Knife", [400, "yellow"]);
+weapons.set("Sharp Blade", [700, "silver"]);
+weapons.set("Crystal Sword", [1500, "blue"]);
+weapons.set("Ancient Stone Sword", [3000, "grey"]);
 let weaponsKey = ["Stick", "Wooden Sword", "Rusty Kitchen Knife", "Sharp Blade", "Crystal Sword", "Ancient Stone Sword"];
 let weaponLevel = 0;
 
@@ -181,9 +180,6 @@ class PlayerMenu {
   displayItems(){
     // Equipment slots
     // Weapon 
-    if (currentDurability <= 0) {
-      inventory[0][0] = " ";
-    }
     if (inventory[0][0] !== " ") {
       // location of the first slot 
       let equippedCellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * 1;
@@ -191,9 +187,6 @@ class PlayerMenu {
       // Fills the slot with a color based on weapon equipped. This will eventually get replaced by a sprite but I did not have time to make one.
       fill(weapons.get(inventory[0][0])[1]);
       rect(equippedCellX, equippedCellY, this.inventoryCellSize, this.inventoryCellSize, 15);
-      fill("white");
-      textAlign(CENTER);
-      text(currentDurability + "/" + weapons.get(inventory[0][0])[2][1], equippedCellX + this.inventoryCellSize/2, equippedCellY + this.inventoryCellSize/2);
     }
     // Armour - haven't added any yet
     // Ring - haven't added any yet
@@ -219,27 +212,28 @@ class PlayerMenu {
       // Checks if the mouse is within that inventory slot and if it is calls the useItem function with that slots location.
       if (mouseX > this.cellLocation[i][0] && mouseX < this.cellLocation[i][0] + this.inventoryCellSize &&
         mouseY > this.cellLocation[i][1] && mouseY < this.cellLocation[i][1] + this.inventoryCellSize) {
-          push();
+        push();
         textAlign(CENTER);
         textSize(20);
         if (i < 3) {
           if (inventory[1][i%3] instanceof Potion) {
-            fill(100)
+            fill(100);
             rect(mouseX-150, mouseY-150, 150);
-            fill("black")
+            fill("black");
             text(inventory[1][i%3].potionType + " potion", mouseX-75, mouseY-80);
             if (inventory[1][i%3].potionType === "damage"){
               text(inventory[1][i%3].hp + " HP",  mouseX-75, mouseY - 50);
             }
             else {
               text("+" + inventory[1][i%3].hp + " HP",  mouseX-75, mouseY - 50);
-            }          }
+            }          
+          }
         }
         else {
           if (inventory[2][i%3] instanceof Potion) {
-            fill(100)
+            fill(100);
             rect(mouseX-150, mouseY-150, 150);
-            fill("black")
+            fill("black");
             text(inventory[2][i%3].potionType + " potion", mouseX-75, mouseY-80);
 
             if (inventory[2][i%3].potionType === "damage"){
@@ -290,14 +284,6 @@ class PlayerMenu {
     inventory[endY].splice(endX, 1, this.tempInventory[0]); 
   }
 
-  weaponsMapUpdate() {
-    weapons.set("Stick", [50, "brown", [currentDurability, 10]]);
-    weapons.set("Wooden Sword", [150, "red", [currentDurability, 12]]);
-    weapons.set("Rusty Kitchen Knife", [400, "yellow", [currentDurability, 7]]);
-    weapons.set("Sharp Blade", [700, "silver", [currentDurability, 8]]);
-    weapons.set("Crystal Sword", [1500, "blue", [currentDurability, 6]]);
-    weapons.set("Ancient Stone Sword", [3000, "grey", [currentDurability, 20]]);
-  }
 }
 
 // Player managment
@@ -410,7 +396,6 @@ class Player {
 
   attack() {
     ellipse(this.x + height/this.spriteScale / 2, this.y + height/this.spriteScale / 2, 2.5 * height/this.hitboxScale);
-    currentDurability--;
     for (let i = 0; i < enemies.length; i++) {
 
       if (collideRectCircle(enemies[i].x, enemies[i].y, enemies[i].spriteSize, enemies[i].spriteSize, // enemy location
@@ -509,7 +494,6 @@ class Enemy {
       if (character.enemyKills % 5 === 1 && weaponLevel < weaponsKey.length-1) {
         weaponLevel++;
         inventory[0].splice(0, 1, weaponsKey[weaponLevel]);
-        currentDurability = weapons.get(inventory[0][0])[2][1];
       }
 
       return true;
@@ -665,7 +649,6 @@ function handleSidebar(){
   sideBar.displayInventory();
   sideBar.displayItems();
   sideBar.displayInfo();
-  sideBar.weaponsMapUpdate();
 }
 
 // Sets movement variables to true based on key presses. The handleMovement function then uses these vairables for movement.
