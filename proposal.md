@@ -13,7 +13,7 @@ For my major project I plan to make a 2d scroller
 - Sound
 - Instructions
 - Health
-- Health Potion
+- Health Potions
 - Movement
 
 ## Nice to have list

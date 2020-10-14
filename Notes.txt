@@ -1,0 +1,136 @@
+// 15:05/20/9/2020
+// Current version is broken due to scaling of the sprite with
+// screen size as it somehow messed with hitbox detection more 
+// than it should have in my mind.
+// When I draw the hitboxes they do not colide yet it acts like 
+// they do. I am not sure why this is happening however I need
+// to take a break from this for a while
+
+// 9:15/21/9/2020
+// The collision still does not line up.
+// I have no idea why however I found a number that works. 
+// I plan to move on today and maybe add sounds
+// Moved this over from the code so it has it own document and
+// is not taking up space as a giant comment.
+
+// 11:15/21/9/2020
+// My issue with collision was caused by rectMode and imageMode.
+// Currently collision works as intended and there are no issues 
+// that I see I plan on adding Background music tomorrow. I have
+// a few Ideas for what to add but have not deciced and I have
+// no clue how to do it yet. I have also added a death screen.
+
+// 9:25/22/2020
+// I am going to wait on music for now as I havent found a good
+// song for the background. Going to use the background 
+// selection/stitching for extra for experts probably. I was
+// tempted to add enemies today but I will wait as I will
+// probably learn a good way to do it soon rather than just
+// hacking it togeather poorly
+
+// 10:20/22//2020
+// Handed in interactive scene. My current idea for this game is
+// have a set amount of enemies per area and gain power(damage,
+// defense, hp) for every enemy killed. After a set amount of 
+// areas/stages there will be a boss fight. this fight is always
+// accesable but will be near impossible if you go there with no
+// power ups.
+
+// 11:26/25/9/2020
+// Mouse running in our class, fun times. Started working on 
+// enemies. Also Trying to rework sprite animations as it is
+// not the best now. Tried using framecount but I will probably
+// switch to millis() as it seems better and there are issues 
+// with how I used framecount.
+
+// 1/10/2020
+// Changed how sprites switch but I am still using framecount.
+
+// 10:49/2/10/2020
+// Creating a player class. Mostly working but I am getting
+// errors with displaying my sprite.
+
+// 11:42/2/10/2020
+// Fixed errors with displaying char sprite and got enemies
+// working mostly. Hitboxes are not that good but they work as a
+// proof of concept and it is fun just trying to dodge them. I
+// plan to add attacks for the player tonight or tomorrow and
+// then an inventory for the player. I will use this inventory
+// for my 2d array project.
+
+// 10:22/5/10/2020
+// Started work on inventory.
+
+// 11:43/5/10/2020
+// Mostly finished sidebar. Need to work on inventory position.
+// Currently the inventory array is filled with random values to
+// make it so i can display it.
+// Using numbers based on a sidebar of 300 width.
+
+// 10:24/6/10/2020
+// deciced to completly redo the sidebar math and set the
+// screen to a ratio of 2:1 with:height. Hopefully this makes
+// things easier. Game is working properly on a screensize of 
+// 1578 x 789. Remember to comment the sidebar class its a mess.
+
+// 11:15/6/10/2020
+// Got Sidebar to scale based around a height of 789. It isn't
+// pretty but it works. To tired to comment so I will start to
+// add attacking.
+
+// 11:43/6/10/2020
+// Working on deleting enemies if health = 0
+// hit detection is not working at all.
+
+// 11:02/7/10/2020
+// Hit detection is working, I forgot to add a perentheses. I
+// now plan to add weapons and finish the inventory
+// Please comment the code sometime soon its getting hard to 
+// read.
+
+// 11:34/8/10/2020
+// I have added Weapons. They do not drop but they do work. My
+// plans for the rest of the day is to redo the attack function
+// and put it into a mouse pressed function. I still need to
+// comment my code but I did make parts of it slightly more
+// readable. Where there are colours in the weapons I plan to 
+// put sprites for each weapon.
+
+// 11:15/9/10/2020
+// I have added health potions and they work and I am happy. I
+// Still need to add textures and more items but they work. You
+// get a better sword based on how many enemies you kill. They
+// also need textures. I need to make an attacking animation of
+// some sort and I plan on adding sheild consumables (thanks for
+// the idea talapia fish). I am now working on dragging of items
+// and switching their location. Added damage potions so I have
+// different items to use/move.
+
+// 11:40/9/10/2020
+// Waiting until the weekend to add item dragging. I am tired
+// and there is not enough time to get into it now. I also want
+// to add a display that shows up when you hover over the item.
+// This display should show basic info about the item such as 
+// what this item does.
+
+
+// 18:55/12/10/2020
+// Husky from the pubhalls discord server has been helping a lot
+// and has given me examples and pointed me in the right 
+// direction lots. I am currently finishing the inventory so
+// that when you drag an item it switches places. After that I
+// think that I should be done my 2d array project.
+
+// 11:36/12/10/2020
+// Dragging is not working for bottom row. Ask schellenberg
+// about it tomorrow at school. I am at a loss for what is 
+// working and it is late so I am going to sleep.
+
+// 10:07/13/2020
+// I was dumb and had the wrong values being used. Everything 
+// works as intended now. Adding a few weapon and I will look
+// for some sprites for them. 
+
+// 11:35/13/2020
+// Working on displaying a text box with item info when you
+// hover over it.
