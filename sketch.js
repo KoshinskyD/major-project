@@ -21,13 +21,16 @@ let areaCounter = 1;
 // Inventory
 // ITMES
 // Weapons
+
+let sword1, sword2, sword3, sword4, sword5, sword6, sword7, sword8, sword9, sword10, sword11, sword12, sword13, sword14, sword15, sword16, sword17, sword18, sword19, sword20, sword21;
+
 let weapons = new Map();
-weapons.set("Stick", [50, "brown"]);
-weapons.set("Wooden Sword", [150, "red"]);
-weapons.set("Rusty Kitchen Knife", [400, "yellow"]);
-weapons.set("Sharp Blade", [700, "silver"]);
-weapons.set("Crystal Sword", [1500, "blue"]);
-weapons.set("Ancient Stone Sword", [3000, "grey"]);
+weapons.set("Stick", [50, sword1]);
+weapons.set("Wooden Sword", [150, sword1]);
+weapons.set("Rusty Kitchen Knife", [400, sword2]);
+weapons.set("Sharp Blade", [700, sword3]);
+weapons.set("Crystal Sword", [1500, sword4]);
+weapons.set("Ancient Stone Sword", [3000, sword5]);
 let weaponsKey = ["Stick", "Wooden Sword", "Rusty Kitchen Knife", "Sharp Blade", "Crystal Sword", "Ancient Stone Sword"];
 let weaponLevel = 0;
 
@@ -180,14 +183,18 @@ class PlayerMenu {
   displayItems(){
     // Equipment slots
     // Weapon 
+    push();
     if (inventory[0][0] !== " ") {
       // location of the first slot 
       let equippedCellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * 1;
       let equippedCellY = 300 * this.sideBarScaler;
       // Fills the slot with a color based on weapon equipped. This will eventually get replaced by a sprite but I did not have time to make one.
-      fill(weapons.get(inventory[0][0])[1]);
+      fill("white");
+      imageMode(CORNER);
       rect(equippedCellX, equippedCellY, this.inventoryCellSize, this.inventoryCellSize, 15);
+      image(weapons.get(inventory[0][0])[1], equippedCellX+5, equippedCellY, 35, 35);
     }
+    pop();
     // Armour - haven't added any yet
     // Ring - haven't added any yet
 
@@ -516,6 +523,28 @@ function preload() {
   background6 = loadImage("assets/backgrounds/background6.png");
   background7 = loadImage("assets/backgrounds/background7.png");
   background8 = loadImage("assets/backgrounds/background8.png");
+  // Swords
+  sword1 = loadImage("assets/items/swords/woodenSword.png");
+  sword2 = loadImage("assets/items/swords/basicSword1.png");
+  sword3 = loadImage("assets/items/swords/basicSword2.png");
+  sword4 = loadImage("assets/items/swords/basicSword3.png"); 
+  sword5 = loadImage("assets/items/swords/basicSword4.png");
+  sword6 = loadImage("assets/items/swords/basicSword5.png");
+  sword7 = loadImage("assets/items/swords/basicSword6.png");
+  sword8 = loadImage("assets/items/swords/poisonSword1.png");
+  sword9 = loadImage("assets/items/swords/poisonSword2.png");
+  sword10 = loadImage("assets/items/swords/poisonSword3.png");
+  sword11 = loadImage("assets/items/swords/spellSword1.png");
+  sword12 = loadImage("assets/items/swords/spellSword2.png"); 
+  sword13 = loadImage("assets/items/swords/spellSword3.png");
+  sword14 = loadImage("assets/items/swords/bronzeSword1.png");
+  sword15 = loadImage("assets/items/swords/bronzeSword2.png");
+  sword16 = loadImage("assets/items/swords/bronzeSword3.png");   
+  sword17 = loadImage("assets/items/swords/bossSword1.png");
+  sword18 = loadImage("assets/items/swords/bossSword2.png");
+  sword19 = loadImage("assets/items/swords/bossSword3.png");
+  sword20 = loadImage("assets/items/swords/bossSword4.png");
+  sword21 = loadImage("assets/items/swords/bossSword5.png");  
 }
 
 // Setup function runs once at the start of the program.
@@ -538,6 +567,13 @@ function setup() {
   sideBar = new PlayerMenu(sprites);
   character.x = width / 2;
   character.y = height / 2;
+
+  weapons.set("Stick", [50, sword14]);
+  weapons.set("Wooden Sword", [150, sword15]);
+  weapons.set("Rusty Kitchen Knife", [400, sword16]);
+  weapons.set("Sharp Blade", [700, sword3]);
+  weapons.set("Crystal Sword", [1500, sword4]);
+  weapons.set("Ancient Stone Sword", [3000, sword5]);
 }
 
 // Set to run 30 times a second.
