@@ -35,8 +35,8 @@ let weaponLevel = 0;
 class Potion {
   constructor(type) {
     this.potionType = type;
-    this.healthPotionSprite = loadImage("assets/healthPotion.png");
-    this.damagePotionSprite = loadImage("assets/damagePotion.png");
+    this.healthPotionSprite = loadImage("assets/items/healthPotion.png");
+    this.damagePotionSprite = loadImage("assets/items/damagePotion.png");
     this.isBeingDragged = false;
     this.spriteSize = 30 * sideBar.sideBarScaler;
     if (this.potionType === "health") {
@@ -503,19 +503,19 @@ class Enemy {
 
 // Loads images before startup.
 function preload() {
-  knightLeft1 = loadImage("assets/knightLeft1.png");
-  knightLeft2 = loadImage("assets/knightLeft2.png");
-  knightRight1 = loadImage("assets/knightRight1.png");
-  knightRight2 = loadImage("assets/knightRight2.png");
-  knightStill = loadImage("assets/knightStill.png");
-  background1 = loadImage("assets/background1.png");
-  background2 = loadImage("assets/background2.png");
-  background3 = loadImage("assets/background3.png");
-  background4 = loadImage("assets/background4.png");
-  background5 = loadImage("assets/background5.png");
-  background6 = loadImage("assets/background6.png");
-  background7 = loadImage("assets/background7.png");
-  background8 = loadImage("assets/background8.png");
+  knightLeft1 = loadImage("assets/character/knightLeft1.png");
+  knightLeft2 = loadImage("assets/character/knightLeft2.png");
+  knightRight1 = loadImage("assets/character/knightRight1.png");
+  knightRight2 = loadImage("assets/character/knightRight2.png");
+  knightStill = loadImage("assets/character/knightStill.png");
+  background1 = loadImage("assets/backgrounds/background1.png");
+  background2 = loadImage("assets/backgrounds/background2.png");
+  background3 = loadImage("assets/backgrounds/background3.png");
+  background4 = loadImage("assets/backgrounds/background4.png");
+  background5 = loadImage("assets/backgrounds/background5.png");
+  background6 = loadImage("assets/backgrounds/background6.png");
+  background7 = loadImage("assets/backgrounds/background7.png");
+  background8 = loadImage("assets/backgrounds/background8.png");
 }
 
 // Setup function runs once at the start of the program.
