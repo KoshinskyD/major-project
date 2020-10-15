@@ -591,7 +591,7 @@ function setup() {
   character.x = width / 2;
   character.y = height / 2;
 
-  weapons.set("Stick", [50000000, sword1]);
+  weapons.set("Stick", [50, sword1]);
   weapons.set("Wooden Sword", [100, sword2]);
   weapons.set("Iron Sword", [200, sword3]);
   weapons.set("Gold Sword", [300, sword4]);
