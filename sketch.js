@@ -66,7 +66,10 @@ class PlayerMenu {
     this.isItemBeingDragged = false;
     this.sideBarScaler = height/789;
     this.sideBarWidth = width/ (5+1/3);
-    this.weaponCellY = 300 * this.sideBarScaler;
+    this.healthBarX = width - this.sideBarWidth + 50 * this.sideBarScaler;
+    this.healthBarY = 265 * this.sideBarScaler;
+    this.healthBarWidth = 200 * this.sideBarScaler;
+    this.healthBarHeight = 20 * this.sideBarScaler;
     this.inventoryCellSize = 50 * this.sideBarScaler;
     this.sprite = sprites[0];
     this.spriteY = height/6;
@@ -108,7 +111,7 @@ class PlayerMenu {
     rectMode(CORNER);
     // This draws the outline and the grey behind your health when you loose some HP
     fill(180);
-    rect(width - this.sideBarWidth + 50 * this.sideBarScaler, 265 * this.sideBarScaler, 200 * this.sideBarScaler, 20 * this.sideBarScaler);
+    rect(this.healthBarX, this.healthBarY, this.healthBarWidth, this.healthBarHeight);
    
     // Changes the colour of your health bar depending on how much health you have. It changes every 1/3 of your max health you loose/
     if(character.health > 66) {
@@ -214,6 +217,14 @@ class PlayerMenu {
   
   // displays info about an item when you hover over it
   displayInfo() {
+    if (mouseX > this.healthBarX && mouseX < this.healthBarX + this.healthBarWidth &&
+      mouseY > this.healthBarY && mouseY < this.healthBarY + this.healthBarHeight) {
+      fill(120);
+      textAlign(CENTER);
+      textSize(20);
+      fill("black");
+      text(character.health, this.healthBarX, this.healthBarY);
+    }
     // Check Hotbar
     for(let j = 0; j < 3; j++) {
       if (mouseX > this.hotbarCellLocation[j][0] && mouseX < this.hotbarCellLocation[j][0] + this.inventoryCellSize &&
