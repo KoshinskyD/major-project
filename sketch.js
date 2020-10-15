@@ -22,16 +22,11 @@ let areaCounter = 1;
 // ITMES
 // Weapons
 
-let sword1, sword2, sword3, sword4, sword5, sword6, sword7, sword8, sword9, sword10, sword11, sword12, sword13, sword14, sword15, sword16, sword17, sword18, sword19, sword20, sword21;
+let sword1, sword2, sword3, sword4, sword5, sword6, sword7, sword8, sword9, sword10, sword11, sword12, sword13, sword14, sword15, sword16;
 
 let weapons = new Map();
+let weaponsKey = ["Stick", "Wooden Sword", "Iron Sword", "Gold Sword", "Fancy Gold Sword", "Cursed Gold Sword", "Crystal Sword", "Enchanted Crystal Sword", "Magma Sword", "Crystal Broad Sword", "Enchanted Crystal Broad Sword", "Feiry Crystal Broad Sword", "Boss Sword 1", "Boss Sword 2", "Boss Sword 3", "Boss Sword 4"];
 weapons.set("Stick", [50, sword1]);
-weapons.set("Wooden Sword", [150, sword1]);
-weapons.set("Rusty Kitchen Knife", [400, sword2]);
-weapons.set("Sharp Blade", [700, sword3]);
-weapons.set("Crystal Sword", [1500, sword4]);
-weapons.set("Ancient Stone Sword", [3000, sword5]);
-let weaponsKey = ["Stick", "Wooden Sword", "Rusty Kitchen Knife", "Sharp Blade", "Crystal Sword", "Ancient Stone Sword"];
 let weaponLevel = 0;
 
 // Potions
@@ -71,9 +66,10 @@ class PlayerMenu {
     this.isItemBeingDragged = false;
     this.sideBarScaler = height/789;
     this.sideBarWidth = width/ (5+1/3);
+    this.weaponCellY = 300 * this.sideBarScaler;
+    this.inventoryCellSize = 50 * this.sideBarScaler;
     this.sprite = sprites[0];
     this.spriteY = height/6;
-    this.inventoryCellSize = 50 * this.sideBarScaler;
     this.tempInventory = [];
     this.cellLocation = [];
     this.dragStartLocation;
@@ -144,7 +140,7 @@ class PlayerMenu {
     fill("black");
     rect(width - 240 * this.sideBarScaler, 290 * this.sideBarScaler, 190* this.sideBarScaler, 70 * this.sideBarScaler, 15);
     // Hotbar Slots
-    fill("white");
+    fill(80);
     for(let x = 1; x < inventory[0].length+1; x++) {
       // Location of the cell
       let equippedCellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * x;
@@ -159,7 +155,7 @@ class PlayerMenu {
 
     // boxes for inventoy slots
     rectMode(CORNER);
-    fill("white");
+    fill(80);
     // Iterates through the inventory except for the hotbar/equipped items.
     for(let y = 1; y < inventory.length; y++) {
       for(let x = 1; x < inventory[y].length+1; x++) {
@@ -186,13 +182,11 @@ class PlayerMenu {
     push();
     if (inventory[0][0] !== " ") {
       // location of the first slot 
-      let equippedCellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * 1;
+      let equippedCellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5);
       let equippedCellY = 300 * this.sideBarScaler;
       // Fills the slot with a color based on weapon equipped. This will eventually get replaced by a sprite but I did not have time to make one.
-      fill("white");
-      imageMode(CORNER);
-      rect(equippedCellX, equippedCellY, this.inventoryCellSize, this.inventoryCellSize, 15);
-      image(weapons.get(inventory[0][0])[1], equippedCellX+5, equippedCellY, 35, 35);
+      imageMode(CENTER);
+      image(weapons.get(inventory[0][0])[1], equippedCellX + this.inventoryCellSize/2, equippedCellY + this.inventoryCellSize/2, 30, 30);
     }
     pop();
     // Armour - haven't added any yet
@@ -215,6 +209,10 @@ class PlayerMenu {
   
   // displays info about an item when you hover over it
   displayInfo() {
+    // Check Hotbar
+    
+
+    // Check inventory slots
     for (let i = 0; i < 6; i++) {
       // Checks if the mouse is within that inventory slot and if it is calls the useItem function with that slots location.
       if (mouseX > this.cellLocation[i][0] && mouseX < this.cellLocation[i][0] + this.inventoryCellSize &&
@@ -224,7 +222,7 @@ class PlayerMenu {
         textSize(20);
         if (i < 3) {
           if (inventory[1][i%3] instanceof Potion) {
-            fill(100);
+            fill(120);
             rect(mouseX-150, mouseY-150, 150);
             fill("black");
             text(inventory[1][i%3].potionType + " potion", mouseX-75, mouseY-80);
@@ -238,7 +236,7 @@ class PlayerMenu {
         }
         else {
           if (inventory[2][i%3] instanceof Potion) {
-            fill(100);
+            fill(120);
             rect(mouseX-150, mouseY-150, 150);
             fill("black");
             text(inventory[2][i%3].potionType + " potion", mouseX-75, mouseY-80);
@@ -375,6 +373,7 @@ class Player {
 
   // Applies gravity and checks if you are on the ground
   applyGravity() {
+    this.playerDamage = 1 * this.weapon[0];
     // Ground Detection
     this.isGrounded = collideLineRect(0 - 50, height * 0.63, width + 30, height * 0.63, this.x, this.y, height/this.hitboxScale, height/this.hitboxScale);
     
@@ -498,9 +497,10 @@ class Enemy {
         character.health += 5;
       }
       // upgrade your weapon
-      if (character.enemyKills % 5 === 1 && weaponLevel < weaponsKey.length-1) {
+      if (character.enemyKills % 2 === 1 && weaponLevel < weaponsKey.length-1) {
         weaponLevel++;
         inventory[0].splice(0, 1, weaponsKey[weaponLevel]);
+        character.weapon = weapons.get(inventory[0][0]);
       }
 
       return true;
@@ -524,27 +524,22 @@ function preload() {
   background7 = loadImage("assets/backgrounds/background7.png");
   background8 = loadImage("assets/backgrounds/background8.png");
   // Swords
-  sword1 = loadImage("assets/items/swords/woodenSword.png");
-  sword2 = loadImage("assets/items/swords/basicSword1.png");
-  sword3 = loadImage("assets/items/swords/basicSword2.png");
-  sword4 = loadImage("assets/items/swords/basicSword3.png"); 
-  sword5 = loadImage("assets/items/swords/basicSword4.png");
-  sword6 = loadImage("assets/items/swords/basicSword5.png");
-  sword7 = loadImage("assets/items/swords/basicSword6.png");
-  sword8 = loadImage("assets/items/swords/poisonSword1.png");
-  sword9 = loadImage("assets/items/swords/poisonSword2.png");
-  sword10 = loadImage("assets/items/swords/poisonSword3.png");
-  sword11 = loadImage("assets/items/swords/spellSword1.png");
-  sword12 = loadImage("assets/items/swords/spellSword2.png"); 
-  sword13 = loadImage("assets/items/swords/spellSword3.png");
-  sword14 = loadImage("assets/items/swords/bronzeSword1.png");
-  sword15 = loadImage("assets/items/swords/bronzeSword2.png");
-  sword16 = loadImage("assets/items/swords/bronzeSword3.png");   
-  sword17 = loadImage("assets/items/swords/bossSword1.png");
-  sword18 = loadImage("assets/items/swords/bossSword2.png");
-  sword19 = loadImage("assets/items/swords/bossSword3.png");
-  sword20 = loadImage("assets/items/swords/bossSword4.png");
-  sword21 = loadImage("assets/items/swords/bossSword5.png");  
+  sword1 = loadImage("assets/items/swords/weapon1.png");
+  sword2 = loadImage("assets/items/swords/weapon2.png");
+  sword3 = loadImage("assets/items/swords/weapon3.png");
+  sword4 = loadImage("assets/items/swords/weapon4.png"); 
+  sword5 = loadImage("assets/items/swords/weapon5.png");
+  sword6 = loadImage("assets/items/swords/weapon6.png");
+  sword7 = loadImage("assets/items/swords/weapon7.png");
+  sword8 = loadImage("assets/items/swords/weapon8.png");
+  sword9 = loadImage("assets/items/swords/weapon9.png");
+  sword10 = loadImage("assets/items/swords/weapon10.png");
+  sword11 = loadImage("assets/items/swords/weapon11.png");
+  sword12 = loadImage("assets/items/swords/weapon12.png"); 
+  sword13 = loadImage("assets/items/swords/weapon13.png");
+  sword14 = loadImage("assets/items/swords/weapon14.png");
+  sword15 = loadImage("assets/items/swords/weapon15.png");
+  sword16 = loadImage("assets/items/swords/weapon16.png");   
 }
 
 // Setup function runs once at the start of the program.
@@ -568,12 +563,22 @@ function setup() {
   character.x = width / 2;
   character.y = height / 2;
 
-  weapons.set("Stick", [50, sword14]);
-  weapons.set("Wooden Sword", [150, sword15]);
-  weapons.set("Rusty Kitchen Knife", [400, sword16]);
-  weapons.set("Sharp Blade", [700, sword3]);
-  weapons.set("Crystal Sword", [1500, sword4]);
-  weapons.set("Ancient Stone Sword", [3000, sword5]);
+  weapons.set("Stick", [50, sword1]);
+  weapons.set("Wooden Sword", [100, sword2]);
+  weapons.set("Iron Sword", [200, sword3]);
+  weapons.set("Gold Sword", [300, sword4]);
+  weapons.set("Fancy Gold Sword", [400, sword5]);
+  weapons.set("Cursed Gold Sword", [500, sword6]);
+  weapons.set("Crystal Sword", [600, sword7]);
+  weapons.set("Enchanted Crystal Sword", [700, sword8]);
+  weapons.set("Magma Sword", [800, sword9]);
+  weapons.set("Crystal Broad Sword", [900, sword10]);
+  weapons.set("Enchanted Crystal Broad Sword", [1000, sword11]);
+  weapons.set("Feiry Crystal Broad Sword", [1100, sword12]);
+  weapons.set("Boss Sword 1", [1300, sword13]);
+  weapons.set("Boss Sword 2", [1400, sword14]);
+  weapons.set("Boss Sword 3", [1500, sword15]);
+  weapons.set("Boss Sword 4", [1600, sword16]);
 }
 
 // Set to run 30 times a second.

@@ -27,4 +27,7 @@ For my major project I plan to make a 2d scroller
     - ~~You are able to swap items~~
     - Equip/unequip gear
     - Items Drop from Enemies
+- Vault
+    - Consumable that teleports you to vault or after boss kill you teleport
+    - Multiple Storage Chests
 
