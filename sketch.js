@@ -71,7 +71,8 @@ class PlayerMenu {
     this.sprite = sprites[0];
     this.spriteY = height/6;
     this.tempInventory = [];
-    this.cellLocation = [];
+    this.inventoryCellLocation = [];
+    this.hotbarCellLocation = [];
     this.dragStartLocation;
     this.draggedItem;
     this.cellX;
@@ -147,6 +148,10 @@ class PlayerMenu {
       let equippedCellY = 300 * this.sideBarScaler;
       // Drawing the cell
       rect(equippedCellX, equippedCellY, this.inventoryCellSize, this.inventoryCellSize, 15);
+      if (this.hotbarCellLocation.length < 3) {
+        this.hotbarCellLocation.push([equippedCellX, equippedCellY]);
+        console.log(this.hotbarCellLocation);
+      }
     }
     
     // Box surrounding the inventory slots.
@@ -166,8 +171,8 @@ class PlayerMenu {
         rect(cellX, cellY, this.inventoryCellSize, this.inventoryCellSize, 15);
 
         // Takes the first six slots, in this case all slots, and stores their location in an array.
-        if (this.cellLocation.length < 6) {
-          this.cellLocation.push([cellX, cellY]);
+        if (this.inventoryCellLocation.length < 6) {
+          this.inventoryCellLocation.push([cellX, cellY]);
         }
       }
 
@@ -200,7 +205,7 @@ class PlayerMenu {
         // Checks if the inventory slot is empty
         if (inventory[y][x] !== " "){
           // displays item
-          inventory[y][x].display(this.cellLocation, this.inventoryCellSize, cellCounter);
+          inventory[y][x].display(this.inventoryCellLocation, this.inventoryCellSize, cellCounter);
         }
         cellCounter++;
       }
@@ -210,13 +215,35 @@ class PlayerMenu {
   // displays info about an item when you hover over it
   displayInfo() {
     // Check Hotbar
-    
+    for(let j = 0; j < 3; j++) {
+      if (mouseX > this.hotbarCellLocation[j][0] && mouseX < this.hotbarCellLocation[j][0] + this.inventoryCellSize &&
+        mouseY > this.hotbarCellLocation[j][1] && mouseY < this.hotbarCellLocation[j][1] + this.inventoryCellSize) {
+        fill(120);
+        rect(mouseX-150, mouseY-150, 150);
+        fill("black");
+        textAlign(CENTER);
+        textSize(20);
+        push();
+        rectMode(CENTER);
+        if (j === 0) {
+          text(weaponsKey[weaponLevel], mouseX-75, mouseY-80, 80, 100);
+          text("Damage: " + weapons.get(weaponsKey[weaponLevel])[0],  mouseX-75, mouseY - 20);
+        }
+        else if (j === 1) {
+          text("Armour", mouseX-75, mouseY-80);
+        }
+        else {
+          text("Ring", mouseX-75, mouseY-80);
+        }
+        pop();
+      }
+    }
 
     // Check inventory slots
     for (let i = 0; i < 6; i++) {
       // Checks if the mouse is within that inventory slot and if it is calls the useItem function with that slots location.
-      if (mouseX > this.cellLocation[i][0] && mouseX < this.cellLocation[i][0] + this.inventoryCellSize &&
-        mouseY > this.cellLocation[i][1] && mouseY < this.cellLocation[i][1] + this.inventoryCellSize) {
+      if (mouseX > this.inventoryCellLocation[i][0] && mouseX < this.inventoryCellLocation[i][0] + this.inventoryCellSize &&
+        mouseY > this.inventoryCellLocation[i][1] && mouseY < this.inventoryCellLocation[i][1] + this.inventoryCellSize) {
         push();
         textAlign(CENTER);
         textSize(20);
@@ -298,6 +325,7 @@ let character;
 class Player {
   constructor(sprites, inventory) {
     this.health = 100;
+    // this.health = Infinity; // God Mode for testing
     this.maxHealth = this.health;
     this.weapon = weapons.get(inventory[0][0]);
     this.playerDamage = 1 * this.weapon[0];
@@ -563,7 +591,7 @@ function setup() {
   character.x = width / 2;
   character.y = height / 2;
 
-  weapons.set("Stick", [50, sword1]);
+  weapons.set("Stick", [50000000, sword1]);
   weapons.set("Wooden Sword", [100, sword2]);
   weapons.set("Iron Sword", [200, sword3]);
   weapons.set("Gold Sword", [300, sword4]);
@@ -724,8 +752,8 @@ function doubleClicked() {
   // Iterates once for all inventory slots not including the hotbar/equipped items.
   for (let i = 0; i < 6; i++) {
     // Checks if the mouse is within that inventory slot and if it is calls the useItem function with that slots location.
-    if (mouseX > sideBar.cellLocation[i][0] && mouseX < sideBar.cellLocation[i][0] + sideBar.inventoryCellSize &&
-      mouseY > sideBar.cellLocation[i][1] && mouseY < sideBar.cellLocation[i][1] + sideBar.inventoryCellSize) {
+    if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
+      mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
       sideBar.useItem(i);
     }
   }
@@ -740,8 +768,8 @@ function mousePressed() {
   if (sideBar.isItemBeingDragged !== true) {
     // Iterates once for every inventory slot
     for (let i = 0; i < 6; i++) {
-      if (mouseX > sideBar.cellLocation[i][0] && mouseX < sideBar.cellLocation[i][0] + sideBar.inventoryCellSize &&
-         mouseY > sideBar.cellLocation[i][1] && mouseY < sideBar.cellLocation[i][1] + sideBar.inventoryCellSize) {
+      if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
+         mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
         sideBar.isItemBeingDragged = true;
 
         //  check if you are on the top row(slots 1,2,3 or inventory[1]) or the bottom row(slots 4,5,6 or inventory[2]) and drags that item
@@ -769,8 +797,8 @@ function mouseReleased() {
     // Iterates once for every inventory slot
     for (let i = 0; i < 6; i++) {
       // Check Location of the mouse
-      if (mouseX > sideBar.cellLocation[i][0] && mouseX < sideBar.cellLocation[i][0] + sideBar.inventoryCellSize &&
-         mouseY > sideBar.cellLocation[i][1] && mouseY < sideBar.cellLocation[i][1] + sideBar.inventoryCellSize) {
+      if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
+         mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
            
         // If you are in slots 0, 1, 2, the top row, get the x of your mouse, i%3, and set the y to 1.
         if (i < 3) {
