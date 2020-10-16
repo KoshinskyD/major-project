@@ -756,6 +756,9 @@ function tutorial() {
       text("And remember, there is no turning back", 180, 180, 800);
     }
   }
+  if (sideBar.backgroundColour !== "black") {
+    sideBar.backgroundColour = "black";
+  }
   pop();
 }
 
