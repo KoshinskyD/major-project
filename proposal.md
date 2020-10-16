@@ -9,12 +9,13 @@ For my major project I plan to make a 2d scroller
 - ~~Enemies~~
 - ~~Randomized Background~~
 - ~~Inventory~~
-- Weapon, Armour, Ring
-- Sound
-- Instructions
 - ~~Health~~
 - ~~Health Potions~~
 - ~~Movement~~
+- Instructions
+- Weapon, Armour, Ring
+- Attack Animation
+- Sound
 
 ## Nice to have list
 
@@ -31,4 +32,5 @@ For my major project I plan to make a 2d scroller
 - Vault
     - Consumable that teleports you to vault or after boss kill you teleport
     - Multiple Storage Chests
+- Level ups
 
