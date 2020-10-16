@@ -14,12 +14,12 @@ For my major project I plan to make a 2d scroller
 - ~~Movement~~
 - Instructions
 - Weapon, Armour, Ring
-- Attack Animation
 - Sound
 
 ## Nice to have list
 
 - Pause Menu
+- Attack Animation
 - Multiple Characters to choose from
 - Multiple Items (weapons, armours, rings)
 - Multiple Consumables (sheilds, damage boosts, poisons)
