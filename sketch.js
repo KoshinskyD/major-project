@@ -18,6 +18,12 @@ let backgroundColour;
 let state = "start";
 let areaCounter = 1;
 
+let pressedA = false;
+let pressedD = false;
+let pressedSPACE = false;
+let pressedENTER= false;
+
+
 // Inventory
 // ITMES
 // Weapons
@@ -64,6 +70,7 @@ let sideBar;
 class PlayerMenu {
   constructor(sprites) {
     this.isItemBeingDragged = false;
+    this.borderColour = "black";
     this.sideBarScaler = height/789;
     this.sideBarWidth = width/ (5+1/3);
     this.healthBarX = width - this.sideBarWidth + 50 * this.sideBarScaler;
@@ -158,7 +165,7 @@ class PlayerMenu {
     }
     
     // Box surrounding the inventory slots.
-    fill("black");
+    fill(this.borderColour);
     rect(width - 240 * this.sideBarScaler, 375 * this.sideBarScaler, 190 * this.sideBarScaler, 130 * this.sideBarScaler, 15);
 
     // boxes for inventoy slots
@@ -194,7 +201,7 @@ class PlayerMenu {
       let equippedCellY = 300 * this.sideBarScaler;
       // Fills the slot with a color based on weapon equipped. This will eventually get replaced by a sprite but I did not have time to make one.
       imageMode(CENTER);
-      image(weapons.get(inventory[0][0])[1], equippedCellX + this.inventoryCellSize/2, equippedCellY + this.inventoryCellSize/2, 30, 30);
+      image(weapons.get(inventory[0][0])[1], equippedCellX + this.inventoryCellSize/2, equippedCellY + this.inventoryCellSize/2, 30 * this.sideBarScaler, 30 * this.sideBarScaler);
     }
     pop();
     // Armour - haven't added any yet
@@ -217,15 +224,18 @@ class PlayerMenu {
   
   // displays info about an item when you hover over it
   displayInfo() {
+
+    // Health
     if (mouseX > this.healthBarX && mouseX < this.healthBarX + this.healthBarWidth &&
       mouseY > this.healthBarY && mouseY < this.healthBarY + this.healthBarHeight) {
       fill(120);
       textAlign(CENTER);
-      textSize(20);
+      textSize(15 * this.sideBarScaler);
       fill("black");
-      text(character.health, this.healthBarX, this.healthBarY);
+      text(character.health + "/" + character.maxHealth, this.healthBarX + 35 * this.sideBarScaler, this.healthBarY + 15 * this.sideBarScaler);
     }
-    // Check Hotbar
+
+    // Item Info Hotbar
     for(let j = 0; j < 3; j++) {
       if (mouseX > this.hotbarCellLocation[j][0] && mouseX < this.hotbarCellLocation[j][0] + this.inventoryCellSize &&
         mouseY > this.hotbarCellLocation[j][1] && mouseY < this.hotbarCellLocation[j][1] + this.inventoryCellSize) {
@@ -250,7 +260,7 @@ class PlayerMenu {
       }
     }
 
-    // Check inventory slots
+    // Item Info Inventory Slots
     for (let i = 0; i < 6; i++) {
       // Checks if the mouse is within that inventory slot and if it is calls the useItem function with that slots location.
       if (mouseX > this.inventoryCellLocation[i][0] && mouseX < this.inventoryCellLocation[i][0] + this.inventoryCellSize &&
@@ -426,6 +436,10 @@ class Player {
     let direction;
     // right side of the screen
     if (this.x > width - sideBar.sideBarWidth + 20) { // 20 is a buffer so it isnt instant and player can run off screeen
+      if(areaCounter === 1) {
+        character.health -= 50;
+        inventory[1].splice(0, 1, new Potion("health"));
+      }
       this.x = 0;
       selectBackgrounds();
       areaCounter++;
@@ -532,9 +546,6 @@ class Enemy {
   isDead() {
     if (this.health <= 0) {
       character.enemyKills++;
-      if (character.health < character.maxHealth){
-        character.health += 5;
-      }
       // upgrade your weapon
       if (character.enemyKills % 2 === 1 && weaponLevel < weaponsKey.length-1) {
         weaponLevel++;
@@ -639,10 +650,14 @@ function draw() {
     character.applyGravity();
     character.nextScreen();
     
+    handleSidebar();
 
     handleEnemies();
+    if (areaCounter <= 2) {
+      tutorial();
+    }
 
-    handleSidebar();
+
 
   }
   else if (state === "dead") {
@@ -659,17 +674,6 @@ function startScreen() {
   textSize(35);
   text("click to start", width / 2, height / 2, 200, 100);
   if (mouseIsPressed && state === "start") {
-    for (let i = 1; i < inventory.length; i++) {
-      for (let j = 0; j < inventory[i].length; j++) {
-        if (random(0,2) < 1) {
-          inventory[i].splice(j, 1, new Potion("health"));
-        }
-        else {
-          inventory[i].splice(j, 1, new Potion("damage"));
-        }
-      }
-    }
-    // inventory[1].splice(0, 1, new Potion("health"));
     state = "play";
   }
   pop();
@@ -700,6 +704,61 @@ function displayBackground() {
     image(backgrounds[backgroundSelection[i]], height / 2 + height * i, height/2, height, height);
   }
 }
+
+
+function tutorial() {
+  push();
+  fill(158, 158, 158, 200);
+  rect(180, 50, 800, 200, 15);
+  textSize(25);
+  textAlign(CENTER);
+  fill("black");
+  if (areaCounter === 1) {
+    if( !pressedA || !pressedD || !pressedSPACE) {
+      text("The goal of this game is to run as far as you can.", 180, 80, 800);
+      text("Use A and D to move left and right.", 180, 120, 800);
+      text("Press and Hold SPACE to jump.", 180, 150, 800);
+    }
+
+    else{
+      sideBar.borderColour = "black";
+      text("Move Right to continue.", 180, 80, 800);
+      text("There is NO turning back.", 180, 120, 800);
+      text("Progress or Death.", 180, 160, 800);
+      text("The Choice is yours.", 180, 190, 800);
+    }
+  }
+  else if (areaCounter === 2) {
+    if (inventory[1][0] !== " "){
+      sideBar.borderColour = "white";
+      text("Along your journy you will obtain Items.", 180, 80, 800);
+      text("These Items Will appear in your iventory on the right.", 180, 120, 800);
+      text("They will have many uses and can come in quite handy", 180, 160, 800);
+      text("Double Click the health potion to use it", 180, 190, 800);
+      pressedENTER = false;
+    }
+    else if (enemies.length > 0 && !pressedENTER) {
+      sideBar.borderColour = "black";
+      text("Along your journy you will also encounter Enemies", 180, 80, 800);
+      text("Running into them will damage you.", 180, 130, 800);
+      text("Take too much damage and you will die", 180, 160, 800);
+      text("(Press ENTER to continue)", 180, 200, 800);
+    }
+    else if (enemies.length > 0 && pressedENTER) {
+      text("Walk up to enemies and Left Click to attack.", 180, 80, 800);
+      text("Different Weapons will do more or less damage.", 180, 120, 800);
+      text("Kill all enemies for bonuses.", 180, 160, 800);
+    }
+    else {
+      character.health = character.maxHealth;
+      text("You are ready to continue.", 180, 80, 800);
+      text("Good luck in your adventures.", 180, 150, 800);
+      text("And remember, there is no turning back", 180, 180, 800);
+    }
+  }
+  pop();
+}
+
 
 // Handles all enemy actions ex.(displaying, moving, attacking, etc.).
 function handleEnemies() {
@@ -734,14 +793,20 @@ function handleSidebar(){
 // Sets movement variables to true based on key presses. The handleMovement function then uses these vairables for movement.
 function keyPressed() {
   if (key === "a") {
+    pressedA = true;
     character.isMovingLeft = true;
   }
   if (key === "d") {
+    pressedD = true;
     character.isMovingRight = true;
   }
   if (keyCode === 32 && character.isGrounded) {
+    pressedSPACE = true;
     character.initialY = character.y;
     character.isJumping = true;
+  }
+  if (keyCode === 13) {
+    pressedENTER = true;
   }
 }
 
@@ -775,6 +840,7 @@ function mousePressed() {
   if (state === "play" && mouseX < width - sideBar.sideBarWidth){
     character.attack();
   }
+
   // Sanity Check to make sure you arent already dragging an item.
   if (sideBar.isItemBeingDragged !== true) {
     // Iterates once for every inventory slot
@@ -796,6 +862,15 @@ function mousePressed() {
           inventory[2][i % 3].isBeingDragged = true;
         }
       }
+      // for (let i = 0; i < 3; i++) {
+      //   if (mouseX > sideBar.hotbarCellLocation[i][0] && mouseX < sideBar.hotbarCellLocation[i][0] + sideBar.inventoryCellSize &&
+      //     mouseY > sideBar.hotbarCellLocation[i][1] && mouseY < sideBar.hotbarCellLocation[i][1] + sideBar.inventoryCellSize) {
+      //     sideBar.isItemBeingDragged = true;
+      //     sideBar.draggedItem = inventory[0][i];
+      //     sideBar.dragStartLocation = [[0],[i]];
+      //     inventory[0][i].isBeingDragged = true;
+      //   }
+      // }
     }
   }
 }
