@@ -19,6 +19,7 @@ For my major project I plan to make a 2d scroller
 ## Nice to have list
 
 - Pause Menu
+- Starting Cutscene
 - Attack Animation
 - Multiple Characters to choose from
 - Multiple Items (weapons, armours, rings)
