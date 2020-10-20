@@ -1,3 +1,6 @@
+let redBag;
+let blackBag;
+
 
 // Background managment.
 let background1, background2, background3, background4, background5, background6, background7, background8;
@@ -151,7 +154,6 @@ class PlayerMenu {
       rect(equippedCellX, equippedCellY, this.inventoryCellSize, this.inventoryCellSize, 15);
       if (this.hotbarCellLocation.length < 3) {
         this.hotbarCellLocation.push([equippedCellX, equippedCellY]);
-        console.log(this.hotbarCellLocation);
       }
     }
     
@@ -179,6 +181,26 @@ class PlayerMenu {
 
     }
     pop();
+  }
+
+  displayBagInventory() {
+    // Box surrounding the inventory slots.
+    fill("black");
+    rect(width - 240 * this.sideBarScaler, 565 * this.sideBarScaler, 190 * this.sideBarScaler, 130 * this.sideBarScaler, 15);
+
+    // boxes for inventoy slots
+    rectMode(CORNER);
+    fill(80);
+    // Iterates through the inventory except for the hotbar/equipped items.
+    for(let y = 0; y < 2; y++) {
+      for(let x = 0; x < 3; x++) {
+        // Sets the cell location.
+        let cellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * (x + 1);
+        let cellY = 575 *this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * y;
+        // Draws the Cell
+        rect(cellX, cellY, this.inventoryCellSize, this.inventoryCellSize, 15);
+      }
+    }
   }
 
   // Items
@@ -329,6 +351,38 @@ class PlayerMenu {
   }
 
 }
+let bags = [];
+class ItemBag {
+  constructor(bagLocation) {
+    this.inventory = [["","",""],["","",""]];
+    this.scaler = height/789;
+    this.inventoryCellSize = 50 * this.scaler;  
+    this.bagX = bagLocation;
+    this.itemDrops();
+  }
+  // Determins what items are in the bag
+  itemDrops() {
+    let items = [];
+    if (Math.round(random(3)) === 1) {
+      items.push(new Potion("health"));
+    }
+    if (Math.round(random(10)) === 1) {
+      items.push(sword1);
+    }
+    console.log(items);
+    for (let i = 0; i < items.length; i++) {
+      this.inventory.splice(0, 1, bags[i]);
+    }
+  }
+
+  displayBag() {
+    push();
+    imageMode(CENTER);
+    image(redBag, this.bagX + 40, height*0.6, 80, 80);
+    pop();
+  }
+
+}
 
 // Player managment
 let sprites = [];
@@ -436,6 +490,7 @@ class Player {
       areaCounter++;
       direction = "left";
       spawnEnemies(direction);
+      bags = [];
     } 
     // left side of the screen
     else if (this.x < 0 - 25) {
@@ -544,6 +599,7 @@ class Enemy {
         character.weapon = weapons.get(inventory[0][0]);
       }
 
+      bags.push(new ItemBag(this.x));
       return true;
     }
   }
@@ -580,7 +636,10 @@ function preload() {
   sword13 = loadImage("assets/items/swords/weapon13.png");
   sword14 = loadImage("assets/items/swords/weapon14.png");
   sword15 = loadImage("assets/items/swords/weapon15.png");
-  sword16 = loadImage("assets/items/swords/weapon16.png");   
+  sword16 = loadImage("assets/items/swords/weapon16.png");
+  // Bags
+  redBag = loadImage("assets/bags/redBag.png"); 
+  blackBag = loadImage("assets/bags/blackBag.png");  
 }
 
 // Setup function runs once at the start of the program.
@@ -641,15 +700,18 @@ function draw() {
     character.applyGravity();
     character.nextScreen();
     
+    
     handleSidebar();
+
+    for (let i = 0; i < bags.length; i++) {
+      bags[i].displayBag();
+    }
+    // droppedBag.displayInventory();
 
     handleEnemies();
     if (areaCounter <= 3) {
       tutorial();
     }
-
-
-
   }
   else if (state === "dead") {
     deathScreen();
@@ -696,7 +758,7 @@ function displayBackground() {
   }
 }
 
-
+// First 2 areas. Explains the game and how to play.
 function tutorial() {
   push();
   if (areaCounter === 1) {
