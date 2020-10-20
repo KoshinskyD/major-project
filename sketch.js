@@ -1,12 +1,3 @@
-// 2D array assignment/game
-// Darren Koshinsky
-// 13/10/2020
-//
-// Extra for Experts:
-// I used 2d arrays in multiple places, Inventory and to name two of them.
-// I think what pushed me above and beyond on this project was the use of
-// splicing to swap the items in your inventory slot and the use of arrays
-// and 2d arrays inside of maps for my weapon.
 
 // Background managment.
 let background1, background2, background3, background4, background5, background6, background7, background8;
@@ -653,7 +644,7 @@ function draw() {
     handleSidebar();
 
     handleEnemies();
-    if (areaCounter <= 2) {
+    if (areaCounter <= 3) {
       tutorial();
     }
 
@@ -708,12 +699,13 @@ function displayBackground() {
 
 function tutorial() {
   push();
-  fill(158, 158, 158, 200);
-  rect(180, 50, 800, 200, 15);
-  textSize(25);
-  textAlign(CENTER);
-  fill("black");
   if (areaCounter === 1) {
+    fill(158, 158, 158, 200);
+    rect(180, 50, 800, 200, 15);
+    textSize(25);
+    textAlign(CENTER);
+
+    fill("black");
     if( !pressedA || !pressedD || !pressedSPACE) {
       text("The goal of this game is to run as far as you can.", 180, 80, 800);
       text("Use A and D to move left and right.", 180, 120, 800);
@@ -721,7 +713,6 @@ function tutorial() {
     }
 
     else{
-      sideBar.borderColour = "black";
       text("Move Right to continue.", 180, 80, 800);
       text("There is NO turning back.", 180, 120, 800);
       text("Progress or Death.", 180, 160, 800);
@@ -729,6 +720,12 @@ function tutorial() {
     }
   }
   else if (areaCounter === 2) {
+
+    fill(158, 158, 158, 200);
+    rect(180, 50, 800, 200, 15);
+    textSize(25);
+    textAlign(CENTER);
+    fill("black");
     if (inventory[1][0] !== " "){
       sideBar.borderColour = "white";
       text("Along your journy you will obtain Items.", 180, 80, 800);
@@ -756,8 +753,8 @@ function tutorial() {
       text("And remember, there is no turning back", 180, 180, 800);
     }
   }
-  if (sideBar.backgroundColour !== "black") {
-    sideBar.backgroundColour = "black";
+  else if (areaCounter === 3) {
+    sideBar.borderColour = "black";
   }
   pop();
 }
