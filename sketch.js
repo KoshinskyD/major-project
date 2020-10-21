@@ -77,6 +77,7 @@ class PlayerMenu {
     this.tempInventory = [];
     this.inventoryCellLocation = [];
     this.hotbarCellLocation = [];
+    this.bagCellLocation = [];
     this.dragStartLocation;
     this.draggedItem;
     this.cellX;
@@ -183,6 +184,7 @@ class PlayerMenu {
     pop();
   }
 
+  // Loot Drops
   displayBagInventory() {
     // Box surrounding the inventory slots.
     fill("black");
@@ -199,6 +201,18 @@ class PlayerMenu {
         let cellY = 575 *this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * y;
         // Draws the Cell
         rect(cellX, cellY, this.inventoryCellSize, this.inventoryCellSize, 15);
+        if (this.bagCellLocation.length < 6) {
+          this.bagCellLocation.push([cellX, cellY]);
+        }
+      }
+    }
+  }
+  
+  // Loot Drops
+  displayBagItmes(bag) {
+    for (let i = 0; i < bag.items.length; i++) {
+      if (bag.items[i] instanceof Potion) {
+        bag.items[i].display(this.bagCellLocation, this.inventoryCellSize, i);
       }
     }
   }
@@ -354,31 +368,40 @@ class PlayerMenu {
 let bags = [];
 class ItemBag {
   constructor(bagLocation) {
-    this.inventory = [["","",""],["","",""]];
+    this.items = [];
     this.scaler = height/789;
     this.inventoryCellSize = 50 * this.scaler;  
-    this.bagX = bagLocation;
+    this.x = bagLocation;
     this.itemDrops();
   }
   // Determins what items are in the bag
   itemDrops() {
-    let items = [];
-    if (Math.round(random(3)) === 1) {
-      items.push(new Potion("health"));
+    if (Math.round(random(3)) === 1 ) {
+      this.items.push(new Potion("health"));
     }
-    if (Math.round(random(10)) === 1) {
-      items.push(sword1);
+    if (Math.round(random(5)) === 1) {
+      this.items.push(new Potion("damage"));
     }
-    console.log(items);
-    for (let i = 0; i < items.length; i++) {
-      this.inventory.splice(0, 1, bags[i]);
+
+    while (this.items.length < 6) {
+      this.items.push(" ");
     }
+    console.log(this.items);
   }
 
+  hasItemsInside() {
+    for (let i = 0; i < this.items.length; i++) {
+      if (this.items[i] !== " ") {
+        return true;
+      }
+    }
+    return false;
+  }
+  // Displays the bag sprite
   displayBag() {
     push();
     imageMode(CENTER);
-    image(redBag, this.bagX + 40, height*0.6, 80, 80);
+    image(redBag, this.x + 40, height*0.6, 80, 80);
     pop();
   }
 
@@ -704,10 +727,10 @@ function draw() {
     handleSidebar();
 
     for (let i = 0; i < bags.length; i++) {
-      bags[i].displayBag();
+      if (bags[i].hasItemsInside()) {
+        bags[i].displayBag();
+      }
     }
-    // droppedBag.displayInventory();
-
     handleEnemies();
     if (areaCounter <= 3) {
       tutorial();
@@ -848,8 +871,16 @@ function handleSidebar(){
   sideBar.display();
   sideBar.healthBar();
   sideBar.displayInventory();
+
+  for (let i = 0; i < bags.length; i++) {
+    if (character.x + 40 > bags[i].x && character.x < bags[i].x + 40 && bags[i].hasItemsInside()) {   
+      sideBar.displayBagInventory(); 
+      sideBar.displayBagItmes(bags[i]);
+    }
+  }
   sideBar.displayItems();
   sideBar.displayInfo();
+
 }
 
 // Sets movement variables to true based on key presses. The handleMovement function then uses these vairables for movement.

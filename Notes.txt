@@ -152,3 +152,6 @@
 
 // found weird bug where everything is shaking side to side. no
 // clue whats happening
+
+// 10:20/21/10/2020
+// Potions drop in bags properly now working on being able to move them into the inventory.
