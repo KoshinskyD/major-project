@@ -330,27 +330,44 @@ class PlayerMenu {
   }
 
   // Use Items
-  useItem(inventorySlot) {
+  useItem(inventorySlot, bag, bagNumber) {
     // inventory slot is a number from 0-5. 0 being the top left slot and 5 being the bottom right slot.
-    let x = inventorySlot % 3;
-    let y;
-    if (inventorySlot > 2) {
-      y = 2;
-    }
-    else {
-      y = 1;
-    }
-    // Sanity check to make sure you do not overheal above your maximum health.
-    if (inventory[y][x] instanceof Potion) {
-      if (character.maxHealth - character.health < 50 && inventory[y][x].potionType === "health") {
-        character.health = character.maxHealth;
+    if (bag === "inventory") {
+      let x = inventorySlot % 3;
+      let y;
+      if (inventorySlot > 2) {
+        y = 2;
       }
-      // applies the potion affect which is +50hp for healing potions and - 50hp for damaging potions. 
-      else{
-        character.health += inventory[y][x].hp;
+      else {
+        y = 1;
       }
-      // Sets that inventory slot to be a blank string or empty after an item has been used
-      inventory[y].splice(x, 1, " ");
+      // Sanity check to make sure you do not overheal above your maximum health.
+      if (inventory[y][x] instanceof Potion) {
+        if (character.maxHealth - character.health < 50 && inventory[y][x].potionType === "health") {
+          character.health = character.maxHealth;
+        }
+        // applies the potion affect which is +50hp for healing potions and - 50hp for damaging potions. 
+        else{
+          character.health += inventory[y][x].hp;
+        }
+        // Sets that inventory slot to be a blank string or empty after an item has been used
+        inventory[y].splice(x, 1, " ");
+      }
+    }
+
+    else if (bag === "bag") {
+      if (bags[bagNumber].items[inventorySlot] instanceof Potion) {
+        if (character.maxHealth - character.health < 50 && bags[bagNumber].items[inventorySlot].potionType === "health") {
+          character.health = character.maxHealth;
+        }
+        // applies the potion affect which is +50hp for healing potions and - 50hp for damaging potions. 
+        else{
+          character.health += bags[bagNumber].items[inventorySlot].hp;
+        }
+        // Sets that inventory slot to be a blank string or empty after an item has been used
+        // console.log(bags[bagNumber].items)
+        bags[bagNumber].items.splice(inventorySlot, 1, " ");
+      }
     }
   }
 
@@ -923,7 +940,14 @@ function doubleClicked() {
     // Checks if the mouse is within that inventory slot and if it is calls the useItem function with that slots location.
     if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
       mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
-      sideBar.useItem(i);
+      sideBar.useItem(i, "inventory");
+    }
+
+    for (let j = 0; j < bags.length; j++) {
+      if (mouseX > sideBar.bagCellLocation[i][0] && mouseX < sideBar.bagCellLocation[i][0] + sideBar.inventoryCellSize &&
+      mouseY > sideBar.bagCellLocation[i][1] && mouseY < sideBar.bagCellLocation[i][1] + sideBar.inventoryCellSize) {
+        sideBar.useItem(i, "bag", j);
+      }
     }
   }
 }
