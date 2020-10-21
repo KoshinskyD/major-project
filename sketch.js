@@ -930,68 +930,86 @@ function doubleClicked() {
 
 // Function that is called once every time a mouse button is pressed.
 function mousePressed() {
-  if (state === "play" && mouseX < width - sideBar.sideBarWidth){
-    character.attack();
-  }
+  if (state === "play"){
+    if (mouseX < width - sideBar.sideBarWidth){
+      character.attack();
+    }
 
-  // Sanity Check to make sure you arent already dragging an item.
-  if (sideBar.isItemBeingDragged !== true) {
-    // Iterates once for every inventory slot
-    for (let i = 0; i < 6; i++) {
-      if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
+    // Sanity Check to make sure you arent already dragging an item.
+    if (sideBar.isItemBeingDragged !== true) {
+
+
+      // Iterates once for every inventory slot
+      for (let i = 0; i < 6; i++) {
+        if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
          mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
-        sideBar.isItemBeingDragged = true;
+          sideBar.isItemBeingDragged = true;
 
-        //  check if you are on the top row(slots 1,2,3 or inventory[1]) or the bottom row(slots 4,5,6 or inventory[2]) and drags that item
-        if (i < 3) {
+          //  check if you are on the top row(slots 1,2,3 or inventory[1]) or the bottom row(slots 4,5,6 or inventory[2]) and drags that item
+          if (i < 3) {
 
-          sideBar.draggedItem = inventory[1][i % 3];
-          sideBar.dragStartLocation = [[1],[i % 3]];
-          inventory[1][i % 3].isBeingDragged = true;
-        }
-        else {
-          sideBar.draggedItem = inventory[2][i % 3];
-          sideBar.dragStartLocation = [[2],[i % 3]];
-          inventory[2][i % 3].isBeingDragged = true;
+            sideBar.draggedItem = inventory[1][i % 3];
+            sideBar.dragStartLocation = [[1],[i % 3]];
+            inventory[1][i % 3].isBeingDragged = true;
+          }
+          else {
+            sideBar.draggedItem = inventory[2][i % 3];
+            sideBar.dragStartLocation = [[2],[i % 3]];
+            inventory[2][i % 3].isBeingDragged = true;
+          }
         }
       }
-      // for (let i = 0; i < 3; i++) {
-      //   if (mouseX > sideBar.hotbarCellLocation[i][0] && mouseX < sideBar.hotbarCellLocation[i][0] + sideBar.inventoryCellSize &&
-      //     mouseY > sideBar.hotbarCellLocation[i][1] && mouseY < sideBar.hotbarCellLocation[i][1] + sideBar.inventoryCellSize) {
-      //     sideBar.isItemBeingDragged = true;
-      //     sideBar.draggedItem = inventory[0][i];
-      //     sideBar.dragStartLocation = [[0],[i]];
-      //     inventory[0][i].isBeingDragged = true;
-      //   }
-      // }
+
+      // Item Bags
+      for (let j = 0; j < bags.length; j++) {
+        for (let i = 0; i < 6; i++) {
+          if (character.x + 40 > bags[j].x && character.x < bags[j].x + 40 && bags[j].hasItemsInside()) {
+            if (mouseX > sideBar.bagCellLocation[i][0] && mouseX < sideBar.bagCellLocation[i][0] + sideBar.inventoryCellSize &&
+              mouseY > sideBar.bagCellLocation[i][1] && mouseY < sideBar.bagCellLocation[i][1] + sideBar.inventoryCellSize) {
+              sideBar.isItemBeingDragged = true;
+
+              // Checks if character is on a bag and if that bag has items in it.
+              sideBar.draggedItem = bags[j].items[i];
+
+              sideBar.dragStartLocation = i;
+              bags[j].items[i].isBeingDragged = true;
+            }
+          }
+          else {
+            bags[j].items[i].isBeingDragged = false;
+          }
+        }
+      }
     }
   }
 }
 
-function mouseReleased() {
 
+function mouseReleased() {
+  if (state === "play") {
   // If an item was being dragged sets a boolean to false to show that an item isn't being dragged.
-  if (sideBar.isItemBeingDragged === true) {
-    sideBar.isItemBeingDragged = false;
-    // Iterates once for every inventory slot
-    for (let i = 0; i < 6; i++) {
+    if (sideBar.isItemBeingDragged === true) {
+      sideBar.isItemBeingDragged = false;
+      // Iterates once for every inventory slot
+      for (let i = 0; i < 6; i++) {
       // Check Location of the mouse
-      if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
+        if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
          mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
            
-        // If you are in slots 0, 1, 2, the top row, get the x of your mouse, i%3, and set the y to 1.
-        if (i < 3) {
-          sideBar.dragItems(sideBar.dragStartLocation[1], sideBar.dragStartLocation[0], i % 3, 1);
-        }
+          // If you are in slots 0, 1, 2, the top row, get the x of your mouse, i%3, and set the y to 1.
+          if (i < 3) {
+            sideBar.dragItems(sideBar.dragStartLocation[1], sideBar.dragStartLocation[0], i % 3, 1);
+          }
 
-        // If you are in slots 3, 4, 5, the bottom row, get the x of your mouse, i%3, and set the y to 2.
-        else {
-          sideBar.dragItems(sideBar.dragStartLocation[1], sideBar.dragStartLocation[0], i % 3, 2);
-        }
+          // If you are in slots 3, 4, 5, the bottom row, get the x of your mouse, i%3, and set the y to 2.
+          else {
+            sideBar.dragItems(sideBar.dragStartLocation[1], sideBar.dragStartLocation[0], i % 3, 2);
+          }
 
+        }
       }
+      // sets the isBeingDragged property of the item to false.
+      sideBar.draggedItem.isBeingDragged = false;
     }
-    // sets the isBeingDragged property of the item to false.
-    sideBar.draggedItem.isBeingDragged = false;
   }
 }
