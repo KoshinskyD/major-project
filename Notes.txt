@@ -154,4 +154,11 @@
 // clue whats happening
 
 // 10:20/21/10/2020
-// Potions drop in bags properly now working on being able to move them into the inventory.
+// Potions drop in bags properly now working on being able to 
+// move them into the inventory.
+
+// 11:34/21/10/2020
+// Item Dragging is a pain and more complex than I want. I might
+// change the iventory from a 2d array with 3 arrays in it, one
+// for each row, to a 2d array with 2 arrays in it, one for the
+// equipment and one for your main inventory slots.
