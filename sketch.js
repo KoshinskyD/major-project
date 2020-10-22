@@ -1,6 +1,3 @@
-let redBag;
-let blackBag;
-
 
 // Background managment.
 let background1, background2, background3, background4, background5, background6, background7, background8;
@@ -23,7 +20,6 @@ let pressedENTER= false;
 // Weapons
 
 let sword1, sword2, sword3, sword4, sword5, sword6, sword7, sword8, sword9, sword10, sword11, sword12, sword13, sword14, sword15, sword16;
-
 let weapons = new Map();
 let weaponsKey = ["Stick", "Wooden Sword", "Iron Sword", "Gold Sword", "Fancy Gold Sword", "Cursed Gold Sword", "Crystal Sword", "Enchanted Crystal Sword", "Magma Sword", "Crystal Broad Sword", "Enchanted Crystal Broad Sword", "Feiry Crystal Broad Sword", "Boss Sword 1", "Boss Sword 2", "Boss Sword 3", "Boss Sword 4"];
 weapons.set("Stick", [50, sword1]);
@@ -37,11 +33,11 @@ class Potion {
     this.damagePotionSprite = loadImage("assets/items/damagePotion.png");
     this.isBeingDragged = false;
     this.spriteSize = 30 * sideBar.sideBarScaler;
-    if (this.potionType === "health") {
+    if (this.potionType === "Health") {
       this.sprite = this.healthPotionSprite;
       this.hp = 50;
     }
-    else if (this.potionType === "damage") {
+    else if (this.potionType === "Damage") {
       this.sprite = this.damagePotionSprite;
       this.hp = -50;
     }
@@ -298,8 +294,8 @@ class PlayerMenu {
           fill(120);
           rect(mouseX-150, mouseY-150, 150);
           fill("black");
-          text(inventory[1][i].potionType + " potion", mouseX-75, mouseY-80);
-          if (inventory[1][i].potionType === "damage"){
+          text(inventory[1][i].potionType + " Potion", mouseX-75, mouseY-80);
+          if (inventory[1][i].potionType === "Damage"){
             text(inventory[1][i].hp + " HP",  mouseX-75, mouseY - 50);
           }
           else {
@@ -318,7 +314,7 @@ class PlayerMenu {
 
       // Sanity check to make sure you do not overheal above your maximum health.
       if (inventory[1][inventorySlot] instanceof Potion) {
-        if (character.maxHealth - character.health < 50 && inventory[1][inventorySlot].potionType === "health") {
+        if (character.maxHealth - character.health < 50 && inventory[1][inventorySlot].potionType === "Health") {
           character.health = character.maxHealth;
         }
         // applies the potion affect which is +50hp for healing potions and - 50hp for damaging potions. 
@@ -333,7 +329,7 @@ class PlayerMenu {
     else if (bagType === "bag") {
       if (bags[bagNumber].items[inventorySlot] instanceof Potion) {
 
-        if (character.maxHealth - character.health < 50 && bags[bagNumber].items[inventorySlot].potionType === "health") {
+        if (character.maxHealth - character.health < 50 && bags[bagNumber].items[inventorySlot].potionType === "Health") {
           character.health = character.maxHealth;
         }
         // applies the potion affect which is +50hp for healing potions and - 50hp for damaging potions. 
@@ -386,6 +382,8 @@ class PlayerMenu {
 }
 
 let bags = [];
+let redBag;
+let blackBag;
 class ItemBag {
   constructor(bagLocation) {
     this.items = [];
@@ -397,10 +395,10 @@ class ItemBag {
   // Determins what items are in the bag
   itemDrops() {
     if (Math.round(random(3)) === 1) {
-      this.items.push(new Potion("health"));
+      this.items.push(new Potion("Health"));
     }
     if (Math.round(random(5)) === 1) {
-      this.items.push(new Potion("damage"));
+      this.items.push(new Potion("Damage"));
     }
 
     while (this.items.length < 6) {
@@ -420,7 +418,7 @@ class ItemBag {
   displayBag() {
     push();
     imageMode(CENTER);
-    image(redBag, this.x + 40, height*0.6, 80, 80);
+    image(blackBag, this.x + 40, height*0.6, 80, 80);
     pop();
   }
 
@@ -525,7 +523,7 @@ class Player {
     if (this.x > width - sideBar.sideBarWidth + 20) { // 20 is a buffer so it isnt instant and player can run off screeen
       if(areaCounter === 1) {
         character.health -= 50;
-        inventory[1].splice(0, 1, new Potion("health"));
+        inventory[1].splice(0, 1, new Potion("Health"));
       }
       this.x = 0;
       selectBackgrounds();
