@@ -690,6 +690,8 @@ function setup() {
   else{
     createCanvas(windowHeight*2 , windowHeight);
   }
+  
+  textAlign(CENTER);
   imageMode(CENTER);
   rectMode(CORNER);
   frameRate(30);
@@ -765,7 +767,7 @@ function startScreen() {
   background(backgroundColour);
   fill(255);
   textSize(35);
-  text("click to start", width / 2, height / 2, 200, 100);
+  text("Click to Start", width / 2, height / 2);
   if (mouseIsPressed && state === "start") {
     state = "play";
   }
@@ -778,7 +780,10 @@ function deathScreen() {
   background(backgroundColour);
   fill(255);
   textSize(35);
-  text("You Died", width / 2, height / 2, width/4, height/2);
+  textAlign(CENTER);
+  text("You are Dead", width/2, height/3);
+  text("You Made it to Area " + areaCounter, width / 2, height / 2);
+  
 }
 
 // Selects which backgounds will be shown.
