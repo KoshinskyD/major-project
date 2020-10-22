@@ -59,7 +59,7 @@ class Potion {
 
 // inventory[0] is what is equipped inventory[1] and inventory[2] are your inventory
 // inventory[0][0] is weapon, inventory[0][1] is armour, inventory[0][2] is ring 
-let inventory = [[weaponsKey[0], "armour", "ring"], [" ", " ", " "], [" ", " ", " "]];
+let inventory = [[weaponsKey[0], "armour", "ring"], [" ", " ", " ", " ", " ", " "]];
 let sideBar; 
 class PlayerMenu {
   constructor(sprites) {
@@ -162,24 +162,22 @@ class PlayerMenu {
     fill(this.borderColour);
     rect(width - 240 * this.sideBarScaler, 375 * this.sideBarScaler, 190 * this.sideBarScaler, 130 * this.sideBarScaler, 15);
     // boxes for inventoy slots
+
+
     rectMode(CORNER);
     fill(80);
-    
     // Iterates through the inventory except for the hotbar/equipped items.
-    for(let y = 1; y < inventory.length; y++) {
-      for(let x = 1; x < inventory[y].length+1; x++) {
+    for(let y = 1; y < 3  ; y++) {
+      for(let x = 0; x < 3; x++) {
         // Sets the cell location.
-        let cellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * x;
+        let cellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * (x + 1);
         let cellY = 325 *this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * y;
         // Draws the Cell
         rect(cellX, cellY, this.inventoryCellSize, this.inventoryCellSize, 15);
-
-        // Takes the first six slots, in this case all slots, and stores their location in an array.
         if (this.inventoryCellLocation.length < 6) {
           this.inventoryCellLocation.push([cellX, cellY]);
         }
       }
-
     }
     pop();
   }
@@ -234,19 +232,19 @@ class PlayerMenu {
     // Armour - haven't added any yet
     // Ring - haven't added any yet
 
+
     // Inventory Slots
     let cellCounter = 0;
     // iterates through your inventory slots and displays what item shoud be there
-    for (let y = 1; y < inventory.length; y++) {
-      for (let x = 0; x < inventory[y].length; x++) {
-        // Checks if the inventory slot is empty
-        if (inventory[y][x] !== " "){
-          // displays item
-          inventory[y][x].display(this.inventoryCellLocation, this.inventoryCellSize, cellCounter);
-        }
-        cellCounter++;
+    for (let i = 0; i < inventory[1].length; i++) {
+      // Checks if the inventory slot is empty
+      if (inventory[1][i] !== " "){
+        // displays item
+        inventory[1][i].display(this.inventoryCellLocation, this.inventoryCellSize, cellCounter);
       }
+      cellCounter++;
     }
+
   }
   
   // displays info about an item when you hover over it
@@ -295,34 +293,18 @@ class PlayerMenu {
         push();
         textAlign(CENTER);
         textSize(20);
-        if (i < 3) {
-          if (inventory[1][i%3] instanceof Potion) {
-            fill(120);
-            rect(mouseX-150, mouseY-150, 150);
-            fill("black");
-            text(inventory[1][i%3].potionType + " potion", mouseX-75, mouseY-80);
-            if (inventory[1][i%3].potionType === "damage"){
-              text(inventory[1][i%3].hp + " HP",  mouseX-75, mouseY - 50);
-            }
-            else {
-              text("+" + inventory[1][i%3].hp + " HP",  mouseX-75, mouseY - 50);
-            }          
-          }
-        }
-        else {
-          if (inventory[2][i%3] instanceof Potion) {
-            fill(120);
-            rect(mouseX-150, mouseY-150, 150);
-            fill("black");
-            text(inventory[2][i%3].potionType + " potion", mouseX-75, mouseY-80);
 
-            if (inventory[2][i%3].potionType === "damage"){
-              text(inventory[2][i%3].hp + " HP",  mouseX-75, mouseY - 50);
-            }
-            else {
-              text("+" + inventory[2][i%3].hp + " HP",  mouseX-75, mouseY - 50);
-            }
+        if (inventory[1][i] instanceof Potion) {
+          fill(120);
+          rect(mouseX-150, mouseY-150, 150);
+          fill("black");
+          text(inventory[1][i].potionType + " potion", mouseX-75, mouseY-80);
+          if (inventory[1][i].potionType === "damage"){
+            text(inventory[1][i].hp + " HP",  mouseX-75, mouseY - 50);
           }
+          else {
+            text("+" + inventory[1][i].hp + " HP",  mouseX-75, mouseY - 50);
+          }          
         }
         pop();
       }
@@ -330,33 +312,27 @@ class PlayerMenu {
   }
 
   // Use Items
-  useItem(inventorySlot, bag, bagNumber) {
+  useItem(inventorySlot, bagType, bagNumber) {
     // inventory slot is a number from 0-5. 0 being the top left slot and 5 being the bottom right slot.
-    if (bag === "inventory") {
-      let x = inventorySlot % 3;
-      let y;
-      if (inventorySlot > 2) {
-        y = 2;
-      }
-      else {
-        y = 1;
-      }
+    if (bagType === "inventory") {
+
       // Sanity check to make sure you do not overheal above your maximum health.
-      if (inventory[y][x] instanceof Potion) {
-        if (character.maxHealth - character.health < 50 && inventory[y][x].potionType === "health") {
+      if (inventory[1][inventorySlot] instanceof Potion) {
+        if (character.maxHealth - character.health < 50 && inventory[1][inventorySlot].potionType === "health") {
           character.health = character.maxHealth;
         }
         // applies the potion affect which is +50hp for healing potions and - 50hp for damaging potions. 
         else{
-          character.health += inventory[y][x].hp;
+          character.health += inventory[1][inventorySlot].hp;
         }
         // Sets that inventory slot to be a blank string or empty after an item has been used
-        inventory[y].splice(x, 1, " ");
+        inventory[1].splice(inventorySlot, 1, " ");
       }
     }
 
-    else if (bag === "bag") {
+    else if (bagType === "bag") {
       if (bags[bagNumber].items[inventorySlot] instanceof Potion) {
+
         if (character.maxHealth - character.health < 50 && bags[bagNumber].items[inventorySlot].potionType === "health") {
           character.health = character.maxHealth;
         }
@@ -372,13 +348,13 @@ class PlayerMenu {
   }
 
   // sideBar.dragItems( 0, 1 , 1, 1)
-  dragItems(startX, startY, endX, endY) {
+  dragItems(startSlot, endSlot) {
     this.tempInventory = [];
-    this.tempInventory.push(inventory[startY][startX]);
-    this.tempInventory.push(inventory[endY][endX]);
+    this.tempInventory.push(inventory[1][startSlot]);
+    this.tempInventory.push(inventory[1][endSlot]);
 
-    inventory[startY].splice(startX, 1, this.tempInventory[1]);
-    inventory[endY].splice(endX, 1, this.tempInventory[0]); 
+    inventory[1].splice(startSlot, 1, this.tempInventory[1]);
+    inventory[1].splice(endSlot, 1, this.tempInventory[0]); 
   }
 
 }
@@ -968,18 +944,11 @@ function mousePressed() {
         if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
          mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
           sideBar.isItemBeingDragged = true;
-
-          //  check if you are on the top row(slots 1,2,3 or inventory[1]) or the bottom row(slots 4,5,6 or inventory[2]) and drags that item
-          if (i < 3) {
-
-            sideBar.draggedItem = inventory[1][i % 3];
-            sideBar.dragStartLocation = [[1],[i % 3]];
-            inventory[1][i % 3].isBeingDragged = true;
-          }
-          else {
-            sideBar.draggedItem = inventory[2][i % 3];
-            sideBar.dragStartLocation = [[2],[i % 3]];
-            inventory[2][i % 3].isBeingDragged = true;
+          if (inventory[1][i] !== " ") {
+            sideBar.draggedItem = inventory[1][i];
+  
+            sideBar.dragStartLocation = i;
+            inventory[1][i].isBeingDragged = true;
           }
         }
       }
@@ -1021,16 +990,10 @@ function mouseReleased() {
          mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
            
           // If you are in slots 0, 1, 2, the top row, get the x of your mouse, i%3, and set the y to 1.
-          if (i < 3) {
-            sideBar.dragItems(sideBar.dragStartLocation[1], sideBar.dragStartLocation[0], i % 3, 1);
-          }
-
-          // If you are in slots 3, 4, 5, the bottom row, get the x of your mouse, i%3, and set the y to 2.
-          else {
-            sideBar.dragItems(sideBar.dragStartLocation[1], sideBar.dragStartLocation[0], i % 3, 2);
-          }
-
+   
+          sideBar.dragItems(sideBar.dragStartLocation, i);
         }
+
       }
       // sets the isBeingDragged property of the item to false.
       sideBar.draggedItem.isBeingDragged = false;
