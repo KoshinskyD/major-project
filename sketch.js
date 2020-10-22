@@ -161,10 +161,10 @@ class PlayerMenu {
     // Box surrounding the inventory slots.
     fill(this.borderColour);
     rect(width - 240 * this.sideBarScaler, 375 * this.sideBarScaler, 190 * this.sideBarScaler, 130 * this.sideBarScaler, 15);
-
     // boxes for inventoy slots
     rectMode(CORNER);
     fill(80);
+    
     // Iterates through the inventory except for the hotbar/equipped items.
     for(let y = 1; y < inventory.length; y++) {
       for(let x = 1; x < inventory[y].length+1; x++) {
