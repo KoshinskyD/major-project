@@ -341,23 +341,50 @@ class PlayerMenu {
           character.health += bags[bagNumber].items[inventorySlot].hp;
         }
         // Sets that inventory slot to be a blank string or empty after an item has been used
-        // console.log(bags[bagNumber].items)
         bags[bagNumber].items.splice(inventorySlot, 1, " ");
       }
     }
   }
 
   // sideBar.dragItems( 0, 1 , 1, 1)
-  dragItems(startSlot, endSlot) {
+  dragItems(startSlot, endSlot, bagNumber) {
     this.tempInventory = [];
-    this.tempInventory.push(inventory[1][startSlot]);
-    this.tempInventory.push(inventory[1][endSlot]);
+    if (bagNumber === undefined) {
+      bagNumber = startSlot[2];
+    }
 
-    inventory[1].splice(startSlot, 1, this.tempInventory[1]);
-    inventory[1].splice(endSlot, 1, this.tempInventory[0]); 
+    if (startSlot[1] ===  "inventory") {
+      this.tempInventory.push(inventory[1][startSlot[0]]);
+    }
+    else {
+      this.tempInventory.push(bags[bagNumber].items[startSlot[0]]);
+    }
+    if (endSlot[1] === "inventory") {
+      this.tempInventory.push(inventory[1][endSlot[0]]);
+    }
+    else {
+      this.tempInventory.push(bags[bagNumber].items[endSlot[0]]);
+    }
+    if (startSlot[1] ===  "inventory" && endSlot[1] === "inventory") {
+      inventory[1].splice(startSlot[0], 1, this.tempInventory[1]);
+      inventory[1].splice(endSlot[0], 1, this.tempInventory[0]); 
+    }
+    else if (startSlot[1] ===  "bag" && endSlot[1] === "bag" ) {
+      bags[bagNumber].items.splice(startSlot[0], 1, this.tempInventory[1]);
+      bags[bagNumber].items.splice(endSlot[0], 1, this.tempInventory[0]);
+    }
+    else if (startSlot[1] ===  "inventory" && endSlot[1] === "bag") {
+      inventory[1].splice(startSlot[0], 1, this.tempInventory[1]);
+      bags[bagNumber].items.splice(endSlot[0], 1, this.tempInventory[0]);
+    }
+    else if  (startSlot[1] ===  "bag" && endSlot[1] === "inventory"){
+      bags[bagNumber].items.splice(startSlot[0], 1, this.tempInventory[1]);
+      inventory[1].splice(endSlot[0], 1, this.tempInventory[0]); 
+    }
   }
 
 }
+
 let bags = [];
 class ItemBag {
   constructor(bagLocation) {
@@ -369,7 +396,7 @@ class ItemBag {
   }
   // Determins what items are in the bag
   itemDrops() {
-    if (Math.round(random(3)) === 1 ) {
+    if (Math.round(random(3)) === 1) {
       this.items.push(new Potion("health"));
     }
     if (Math.round(random(5)) === 1) {
@@ -379,7 +406,6 @@ class ItemBag {
     while (this.items.length < 6) {
       this.items.push(" ");
     }
-    console.log(this.items);
   }
 
   hasItemsInside() {
@@ -822,7 +848,7 @@ function tutorial() {
     else if (enemies.length > 0 && pressedENTER) {
       text("Walk up to enemies and Left Click to attack.", 180, 80, 800);
       text("Different Weapons will do more or less damage.", 180, 120, 800);
-      text("Kill all enemies for bonuses.", 180, 160, 800);
+      text("Kill all enemies for more items.", 180, 160, 800);
     }
     else {
       character.health = character.maxHealth;
@@ -920,9 +946,11 @@ function doubleClicked() {
     }
 
     for (let j = 0; j < bags.length; j++) {
-      if (mouseX > sideBar.bagCellLocation[i][0] && mouseX < sideBar.bagCellLocation[i][0] + sideBar.inventoryCellSize &&
+      if (character.x + 40 > bags[j].x && character.x < bags[j].x + 40 && bags[j].hasItemsInside()) {
+        if (mouseX > sideBar.bagCellLocation[i][0] && mouseX < sideBar.bagCellLocation[i][0] + sideBar.inventoryCellSize &&
       mouseY > sideBar.bagCellLocation[i][1] && mouseY < sideBar.bagCellLocation[i][1] + sideBar.inventoryCellSize) {
-        sideBar.useItem(i, "bag", j);
+          sideBar.useItem(i, "bag", j);
+        }
       }
     }
   }
@@ -937,8 +965,6 @@ function mousePressed() {
 
     // Sanity Check to make sure you arent already dragging an item.
     if (sideBar.isItemBeingDragged !== true) {
-
-
       // Iterates once for every inventory slot
       for (let i = 0; i < 6; i++) {
         if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
@@ -947,7 +973,7 @@ function mousePressed() {
           if (inventory[1][i] !== " ") {
             sideBar.draggedItem = inventory[1][i];
   
-            sideBar.dragStartLocation = i;
+            sideBar.dragStartLocation = [i, "inventory"];
             inventory[1][i].isBeingDragged = true;
           }
         }
@@ -964,7 +990,7 @@ function mousePressed() {
               // Checks if character is on a bag and if that bag has items in it.
               sideBar.draggedItem = bags[j].items[i];
 
-              sideBar.dragStartLocation = i;
+              sideBar.dragStartLocation = [i, "bag", j];
               bags[j].items[i].isBeingDragged = true;
             }
           }
@@ -977,24 +1003,38 @@ function mousePressed() {
   }
 }
 
-
+// Function that is called once every time a mouse button is released.
 function mouseReleased() {
   if (state === "play") {
   // If an item was being dragged sets a boolean to false to show that an item isn't being dragged.
     if (sideBar.isItemBeingDragged === true) {
       sideBar.isItemBeingDragged = false;
-      // Iterates once for every inventory slot
+      // Checks if the mouse is over the inventory
       for (let i = 0; i < 6; i++) {
-      // Check Location of the mouse
         if (mouseX > sideBar.inventoryCellLocation[i][0] && mouseX < sideBar.inventoryCellLocation[i][0] + sideBar.inventoryCellSize &&
          mouseY > sideBar.inventoryCellLocation[i][1] && mouseY < sideBar.inventoryCellLocation[i][1] + sideBar.inventoryCellSize) {
-           
-          // If you are in slots 0, 1, 2, the top row, get the x of your mouse, i%3, and set the y to 1.
-   
-          sideBar.dragItems(sideBar.dragStartLocation, i);
+          let dragEndLocation = [i, "inventory"];
+          sideBar.dragItems(sideBar.dragStartLocation, dragEndLocation);
         }
 
       }
+
+
+      
+      for (let j = 0; j < bags.length; j++) {
+        for (let i = 0; i < 6; i++) {
+          if (character.x + 40 > bags[j].x && character.x < bags[j].x + 40 && bags[j].hasItemsInside()) {
+            if (mouseX > sideBar.bagCellLocation[i][0] && mouseX < sideBar.bagCellLocation[i][0] + sideBar.inventoryCellSize &&
+              mouseY > sideBar.bagCellLocation[i][1] && mouseY < sideBar.bagCellLocation[i][1] + sideBar.inventoryCellSize) {
+
+              let dragEndLocation = [i, "bag"];
+              sideBar.dragItems(sideBar.dragStartLocation, dragEndLocation, j);
+            }
+          }
+        }
+      }
+
+
       // sets the isBeingDragged property of the item to false.
       sideBar.draggedItem.isBeingDragged = false;
     }
