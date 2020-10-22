@@ -13,7 +13,7 @@ For my major project I plan to make a 2d scroller
 - ~~Health Potions~~
 - ~~Movement~~
 - ~~Instructions~~
-- Weapon, Armour, Ring
+- ~~Weapon~~, Armour, Ring
 - Sound
 
 ## Nice to have list
@@ -29,7 +29,7 @@ For my major project I plan to make a 2d scroller
     - ~~Item info displayed when you hover over it~~
     - ~~You are able to swap items~~
     - Equip/unequip gear
-    - Items Drop from Enemies
+    - ~~Items Drop from Enemies~~
 - Vault
     - Consumable that teleports you to vault or after boss kill you teleport
     - Multiple Storage Chests
