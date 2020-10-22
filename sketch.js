@@ -690,7 +690,7 @@ function setup() {
   else{
     createCanvas(windowHeight*2 , windowHeight);
   }
-  
+
   textAlign(CENTER);
   imageMode(CENTER);
   rectMode(CORNER);
@@ -782,7 +782,7 @@ function deathScreen() {
   textSize(35);
   textAlign(CENTER);
   text("You are Dead", width/2, height/3);
-  text("You Made it to Area " + areaCounter, width / 2, height / 2);
+  text("You Made it to Area " + areaCounter + " Defeating " + character.enemyKills + " Enemies", width / 2, height / 2);
   
 }
 
