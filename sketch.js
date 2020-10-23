@@ -1,4 +1,8 @@
 
+
+let soundEffect1, soundEffect2, soundEffect3, soundEffect4, soundEffect5, soundEffect6, soundEffect7, soundEffect8;
+let sounds = [];
+
 // Background managment.
 let background1, background2, background3, background4, background5, background6, background7, background8;
 let backgrounds = [];
@@ -46,11 +50,9 @@ class Sword {
     }
     else {
       this.name = type;
-      console.log(type, this.name);  
     }
 
     this.sprite = weapons.get(this.name);
-    console.log(this.sprite);
   }
 
   display(x, y) {
@@ -573,12 +575,14 @@ class Player {
   }
 
   attack() {
-    console.log(this.playerDamage);
     ellipse(this.x + height/this.spriteScale / 2, this.y + height/this.spriteScale / 2, 2.5 * height/this.hitboxScale);
     for (let i = 0; i < enemies.length; i++) {
 
       if (collideRectCircle(enemies[i].x, enemies[i].y, enemies[i].spriteSize, enemies[i].spriteSize, // enemy location
         this.x + height/this.spriteScale / 2, this.y + height/this.spriteScale / 2, 2.5 * height/this.hitboxScale)) { // attack hitbox
+        
+        let randomNumber = Math.round(random(0, sounds.length-1));
+        sounds[randomNumber].play();
 
         enemies[i].health -= this.playerDamage;
       }
@@ -687,6 +691,7 @@ class Enemy {
 
 // Loads images before startup.
 function preload() {
+
   knightLeft1 = loadImage("assets/character/knightLeft1.png");
   knightLeft2 = loadImage("assets/character/knightLeft2.png");
   knightRight1 = loadImage("assets/character/knightRight1.png");
@@ -717,6 +722,17 @@ function preload() {
   sword14 = loadImage("assets/items/swords/weapon14.png");
   sword15 = loadImage("assets/items/swords/weapon15.png");
   sword16 = loadImage("assets/items/swords/weapon16.png");
+  // Sounds
+  soundFormats("wav");
+  soundEffect1 = loadSound("assets/sounds/attack/attackSound1.wav");
+  soundEffect2 = loadSound("assets/sounds/attack/attackSound2.wav");
+  soundEffect3 = loadSound("assets/sounds/attack/attackSound3.wav");
+  soundEffect4 = loadSound("assets/sounds/attack/attackSound4.wav");
+  soundEffect5 = loadSound("assets/sounds/attack/attackSound5.wav");
+  soundEffect6 = loadSound("assets/sounds/attack/attackSound6.wav");
+  soundEffect7 = loadSound("assets/sounds/attack/attackSound7.wav");
+  soundEffect8 = loadSound("assets/sounds/attack/attackSound8.wav");
+
   // Bags
   redBag = loadImage("assets/bags/redBag.png"); 
   blackBag = loadImage("assets/bags/blackBag.png");  
@@ -741,6 +757,8 @@ function setup() {
   backgrounds = [background1, background2, background3, background4, background5, background6, background7, background8];
   selectBackgrounds();
   backgroundColour = 0;
+
+  sounds = [soundEffect1, soundEffect2, soundEffect3, soundEffect4, soundEffect5, soundEffect6, soundEffect7, soundEffect8];
 
   weapons.set(weaponsKey[0], sword1);
   weapons.set(weaponsKey[1], sword2);
@@ -1007,6 +1025,7 @@ function doubleClicked() {
 
 // Function that is called once every time a mouse button is pressed.
 function mousePressed() {
+  
   if (state === "play"){
     if (mouseX < width - sideBar.sideBarWidth){
       character.attack();
