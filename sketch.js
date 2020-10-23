@@ -159,6 +159,7 @@ let sideBar;
 class PlayerMenu {
   constructor(sprites) {
     this.isItemBeingDragged = false;
+    this.displayingBagInventory = false;
     this.borderColour = "black";
     this.sideBarWidth = width/ (5+1/3);
     this.healthBarX = width - this.sideBarWidth + 50 * scaler;
@@ -176,6 +177,7 @@ class PlayerMenu {
     this.draggedItem;
     this.cellX;
     this.cellY;
+    this.bag;
 
   }
 
@@ -210,10 +212,10 @@ class PlayerMenu {
     rect(this.healthBarX, this.healthBarY, this.healthBarWidth, this.healthBarHeight);
    
     // Changes the colour of your health bar depending on how much health you have. It changes every 1/3 of your max health you loose/
-    if(character.health > 66) {
+    if(character.health > character.maxHealth * (2/3) ) {
       fill("green");
     }
-    else if (character.health > 33) {
+    else if (character.health > character.maxHealth * (1/3) ) {
       fill("orange");
     }
     else {
@@ -227,7 +229,7 @@ class PlayerMenu {
     // Drawns the box that represents how much health you have left. It takes your current health divided by your max health to get the percentage of health left and 
     // multiplies it by the total space you have for your health bar
     // eslint-disable-next-line no-extra-parens
-    rect(width - this.sideBarWidth + 50 * scaler, 265 * scaler, ((character.health / 100) * (200 * scaler) ), 20 * scaler);
+    rect(width - this.sideBarWidth + 50 * scaler, 265 * scaler, ((character.health / character.maxHealth) * (200 * scaler) ), 20 * scaler);
   }
 
   // Inventory
@@ -278,6 +280,7 @@ class PlayerMenu {
 
   // Loot Drops
   displayBagInventory() {
+    this.displayingBagInventory = true;
     // Box surrounding the inventory slots.
     fill("black");
     rect(width - 240 * scaler, 565 * scaler, 190 * scaler, 130 * scaler, 15);
@@ -302,6 +305,7 @@ class PlayerMenu {
   
   // Loot Drops
   displayBagItmes(bag) {
+    this.bag = bag;
     for (let i = 0; i < bag.items.length; i++) {
       if (bag.items[i] instanceof Potion) {
         bag.items[i].display(this.bagCellLocation, this.inventoryCellSize, i);
@@ -421,6 +425,33 @@ class PlayerMenu {
           }          
         }
         pop();
+      }
+    }
+
+    // Bags
+    if (this.displayingBagInventory) {
+      for (let i = 0; i < 6; i++) {
+      // Checks if the mouse is within that inventory slot and if it is calls the useItem function with that slots location.
+        if (mouseX > this.bagCellLocation[i][0] && mouseX < this.bagCellLocation[i][0] + this.inventoryCellSize &&
+              mouseY > this.bagCellLocation[i][1] && mouseY < this.bagCellLocation[i][1] + this.inventoryCellSize) {
+          push();
+          textAlign(CENTER);
+          textSize(20);
+      
+          if (this.bag.items[i] instanceof Potion) {
+            fill(120);
+            rect(mouseX-150, mouseY-150, 150);
+            fill("black");
+            text(this.bag.items[i].potionType + " Potion", mouseX-75, mouseY-80);
+            if (this.bag.items[i].potionType === "Damage"){
+              text(this.bag.items[i].hp + " HP",  mouseX-75, mouseY - 50);
+            }
+            else {
+              text("+" + this.bag.items[i].hp + " HP",  mouseX-75, mouseY - 50);
+            }          
+          }
+          pop();
+        }
       }
     }
   }
@@ -550,6 +581,7 @@ class Player {
     this.defaultHealth = 100;
     this.health = this.defaultHealth;
     this.maxHealth = this.health;
+    this.defense = 0;
     // this.health = Infinity; // God Mode for testing
     this.weapon = inventory[0][0];
     this.armour = inventory[0][1];
@@ -683,14 +715,14 @@ class Player {
       if (this.health >= this.defaultHealth) {
         this.health = this.defaultHealth;
       }
-      this.defense = this.armour.defense;
+      this.defense = 0;
     }
 
     else  if (this.ring.type === "Ring of Health"){
       this.playerDamage = 1 * this.weapon.damage;
       this.maxHealth = this.defaultHealth + this.ring.bonusStat;
       this.health = this.health + this.ring.bonusStat;
-      this.defense = this.armour.defense;
+      this.defense = 0;
     }
     else  if (this.ring.type === "Ring of Defense"){
       this.playerDamage = 1 * this.weapon.damage;
@@ -698,7 +730,7 @@ class Player {
       if (this.health >= this.defaultHealth) {
         this.health = this.defaultHealth;
       }
-      this.defense = this.armour.defense + this.ring.bonusStat;
+      this.defense = this.ring.bonusStat;
     }
   }
 }
@@ -775,7 +807,7 @@ class Enemy {
   // Checks if you are coliding with the player
   checkCollision(character) {
     if (this.x <= character.x + 5 && this.x >= character.x - 5 && this.y <= character.y + height/character.hitboxScale) {
-      character.health -= this.enemyDamage;
+      character.health -= (this.enemyDamage - character.defense);
     }
   }
 
@@ -788,6 +820,9 @@ class Enemy {
 
         inventory[0].splice(0, 1, new Sword());
         character.updateEquipment(); 
+      }
+      if (Math.round(random(10)) === 1) {
+        inventory[0].splice(2, 1, new Ring());
       }
 
       bags.push(new ItemBag(this.x));
