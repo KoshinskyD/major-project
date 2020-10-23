@@ -62,6 +62,68 @@ class Sword {
 
 }
 
+let armour1, armour2, armour3;
+let armours = new Map();
+let armourKey = ["armour 1", "armour 2", "armour 3"];
+
+class Armour {
+  constructor (type) {
+    this.name;
+    this.defense;
+    this.sprite;
+    this.makeArmour(type);
+  }
+
+  makeArmour(type) {
+    this.defense = Math.round(random(areaCounter - 1, areaCounter * 2));
+
+    if (type === undefined) {
+      this.name = armourKey[Math.round(random(0, armourKey.length-1))];
+    }
+    else {
+      this.name = type;
+    }
+
+    this.sprite = armours.get(this.name);
+  }
+
+  display(x, y) {
+    image(this.sprite, x, y, 30*scaler, 30 *scaler);
+  }
+}
+
+let ring1, ring2, ring3;
+let rings = new Map();
+let ringKey = ["Ring of Health", "Ring of Defense", "Ring of Damage"];
+
+class Ring {
+  constructor (type) {
+    this.name;
+    this.bonusStat;
+    this.sprite;
+    this.type = type;
+    this.makeRing();
+  }
+
+  makeRing() {
+    this.bonusStat = Math.round(random(areaCounter - 1, areaCounter * 2));
+
+    if (this.type === undefined) {
+      this.name = ringKey[Math.round(random(0, ringKey.length-1))];
+      this.type = this.name;
+    }
+    else {
+      this.name = this.type;
+    }
+
+    this.sprite = rings.get(this.name);
+  }
+
+  display(x, y) {
+    image(this.sprite, x, y, 30*scaler, 30 *scaler);
+  }
+}
+
 // Potions
 class Potion {
   constructor(type) {
@@ -69,7 +131,7 @@ class Potion {
     this.healthPotionSprite = loadImage("assets/items/healthPotion.png");
     this.damagePotionSprite = loadImage("assets/items/damagePotion.png");
     this.isBeingDragged = false;
-    this.spriteSize = 30 * sideBar.sideBarScaler;
+    this.spriteSize = 30 * scaler;
     if (this.potionType === "Health") {
       this.sprite = this.healthPotionSprite;
       this.hp = 50;
@@ -98,13 +160,12 @@ class PlayerMenu {
   constructor(sprites) {
     this.isItemBeingDragged = false;
     this.borderColour = "black";
-    this.sideBarScaler = height/789;
     this.sideBarWidth = width/ (5+1/3);
-    this.healthBarX = width - this.sideBarWidth + 50 * this.sideBarScaler;
-    this.healthBarY = 265 * this.sideBarScaler;
-    this.healthBarWidth = 200 * this.sideBarScaler;
-    this.healthBarHeight = 20 * this.sideBarScaler;
-    this.inventoryCellSize = 50 * this.sideBarScaler;
+    this.healthBarX = width - this.sideBarWidth + 50 * scaler;
+    this.healthBarY = 265 * scaler;
+    this.healthBarWidth = 200 * scaler;
+    this.healthBarHeight = 20 * scaler;
+    this.inventoryCellSize = 50 * scaler;
     this.sprite = sprites[0];
     this.spriteY = height/6;
     this.tempInventory = [];
@@ -128,15 +189,15 @@ class PlayerMenu {
     // Displaying all text. Area counter, Kill counter
     fill("black");
     textAlign(CENTER);
-    textSize(25 * this.sideBarScaler);
-    text("Area: " + areaCounter, width - this.sideBarWidth /2, 50 * this.sideBarScaler);
-    text("Kills:" + character.enemyKills, width - this.sideBarWidth / 2, 230 * this.sideBarScaler);
+    textSize(25 * scaler);
+    text("Area: " + areaCounter, width - this.sideBarWidth /2, 50 * scaler);
+    text("Kills:" + character.enemyKills, width - this.sideBarWidth / 2, 230 * scaler);
   
     // Character display.
     rectMode(CENTER);
     fill(180);
-    rect(width - this.sideBarWidth/2, this.spriteY, 135* this.sideBarScaler, 135* this.sideBarScaler, 10);
-    image(this.sprite, width - this.sideBarWidth/2, this.spriteY, 100 * this.sideBarScaler, 100 * this.sideBarScaler);
+    rect(width - this.sideBarWidth/2, this.spriteY, 135* scaler, 135* scaler, 10);
+    image(this.sprite, width - this.sideBarWidth/2, this.spriteY, 100 * scaler, 100 * scaler);
     pop();
 
   }
@@ -166,7 +227,7 @@ class PlayerMenu {
     // Drawns the box that represents how much health you have left. It takes your current health divided by your max health to get the percentage of health left and 
     // multiplies it by the total space you have for your health bar
     // eslint-disable-next-line no-extra-parens
-    rect(width - this.sideBarWidth + 50 * this.sideBarScaler, 265 * this.sideBarScaler, ((character.health / 100) * (200 * this.sideBarScaler) ), 20 * this.sideBarScaler);
+    rect(width - this.sideBarWidth + 50 * scaler, 265 * scaler, ((character.health / 100) * (200 * scaler) ), 20 * scaler);
   }
 
   // Inventory
@@ -177,13 +238,13 @@ class PlayerMenu {
     // Hotbar/equipped Items.
     // Makes the black border around the hotbar slots.
     fill("black");
-    rect(width - 240 * this.sideBarScaler, 290 * this.sideBarScaler, 190* this.sideBarScaler, 70 * this.sideBarScaler, 15);
+    rect(width - 240 * scaler, 290 * scaler, 190* scaler, 70 * scaler, 15);
     // Hotbar Slots
     fill(80);
     for(let x = 1; x < inventory[0].length+1; x++) {
       // Location of the cell
-      let equippedCellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * x;
-      let equippedCellY = 300 * this.sideBarScaler;
+      let equippedCellX = width - 290*scaler + (this.inventoryCellSize + this.inventoryCellSize/5) * x;
+      let equippedCellY = 300 * scaler;
       // Drawing the cell
       rect(equippedCellX, equippedCellY, this.inventoryCellSize, this.inventoryCellSize, 15);
       if (this.hotbarCellLocation.length < 3) {
@@ -193,7 +254,7 @@ class PlayerMenu {
     
     // Box surrounding the inventory slots.
     fill(this.borderColour);
-    rect(width - 240 * this.sideBarScaler, 375 * this.sideBarScaler, 190 * this.sideBarScaler, 130 * this.sideBarScaler, 15);
+    rect(width - 240 * scaler, 375 * scaler, 190 * scaler, 130 * scaler, 15);
     // boxes for inventoy slots
 
 
@@ -203,8 +264,8 @@ class PlayerMenu {
     for(let y = 1; y < 3  ; y++) {
       for(let x = 0; x < 3; x++) {
         // Sets the cell location.
-        let cellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * (x + 1);
-        let cellY = 325 *this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * y;
+        let cellX = width - 290*scaler + (this.inventoryCellSize + this.inventoryCellSize/5) * (x + 1);
+        let cellY = 325 *scaler + (this.inventoryCellSize + this.inventoryCellSize/5) * y;
         // Draws the Cell
         rect(cellX, cellY, this.inventoryCellSize, this.inventoryCellSize, 15);
         if (this.inventoryCellLocation.length < 6) {
@@ -219,7 +280,7 @@ class PlayerMenu {
   displayBagInventory() {
     // Box surrounding the inventory slots.
     fill("black");
-    rect(width - 240 * this.sideBarScaler, 565 * this.sideBarScaler, 190 * this.sideBarScaler, 130 * this.sideBarScaler, 15);
+    rect(width - 240 * scaler, 565 * scaler, 190 * scaler, 130 * scaler, 15);
 
     // boxes for inventoy slots
     rectMode(CORNER);
@@ -228,8 +289,8 @@ class PlayerMenu {
     for(let y = 0; y < 2; y++) {
       for(let x = 0; x < 3; x++) {
         // Sets the cell location.
-        let cellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * (x + 1);
-        let cellY = 575 *this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5) * y;
+        let cellX = width - 290*scaler + (this.inventoryCellSize + this.inventoryCellSize/5) * (x + 1);
+        let cellY = 575 *scaler + (this.inventoryCellSize + this.inventoryCellSize/5) * y;
         // Draws the Cell
         rect(cellX, cellY, this.inventoryCellSize, this.inventoryCellSize, 15);
         if (this.bagCellLocation.length < 6) {
@@ -252,18 +313,17 @@ class PlayerMenu {
   displayItems(){
     // Equipment slots
     // Weapon 
-    push();
+
     if (inventory[0][0] !== " ") {
-      // location of the first slot 
-      let equippedCellX = width - 290*this.sideBarScaler + (this.inventoryCellSize + this.inventoryCellSize/5);
-      let equippedCellY = 300 * this.sideBarScaler;
       // Fills the slot with a color based on weapon equipped. This will eventually get replaced by a sprite but I did not have time to make one.
       imageMode(CENTER);
-      inventory[0][0].display(equippedCellX + this.inventoryCellSize/2, equippedCellY + this.inventoryCellSize/2);
+      inventory[0][0].display(this.hotbarCellLocation[0][0] + this.inventoryCellSize/2, this.hotbarCellLocation[0][1] + this.inventoryCellSize/2);
     }
-    pop();
     // Armour - haven't added any yet
     // Ring - haven't added any yet
+    if (inventory[0][2] !== " ") {
+      inventory[0][2].display(this.hotbarCellLocation[2][0] + this.inventoryCellSize/2, this.hotbarCellLocation[2][1] + this.inventoryCellSize/2);
+    }
 
 
     // Inventory Slots
@@ -288,9 +348,9 @@ class PlayerMenu {
       mouseY > this.healthBarY && mouseY < this.healthBarY + this.healthBarHeight) {
       fill(120);
       textAlign(CENTER);
-      textSize(15 * this.sideBarScaler);
+      textSize(15 * scaler);
       fill("black");
-      text(character.health + "/" + character.maxHealth, this.healthBarX + 35 * this.sideBarScaler, this.healthBarY + 15 * this.sideBarScaler);
+      text(character.health + "/" + character.maxHealth, this.healthBarX + 35 * scaler, this.healthBarY + 15 * scaler);
     }
 
     // Item Info Hotbar
@@ -304,15 +364,36 @@ class PlayerMenu {
         textSize(20);
         push();
         rectMode(CENTER);
-        if (j === 0) {
-          text(inventory[0][0].name, mouseX-75, mouseY-80, 80, 100);
-          text("Damage: " + inventory[0][0].damage,  mouseX-75, mouseY - 20);
-        }
-        else if (j === 1) {
-          text("Armour", mouseX-75, mouseY-80);
+        if (inventory[0][j] !== " ") {
+          if (j === 0) {
+            text(inventory[0][0].name, mouseX-75, mouseY-80, 80, 100);
+            text("Damage: " + inventory[0][0].damage,  mouseX-75, mouseY - 20);
+          }
+
+          // Checks what armour is equipped and displays its info
+          else if (j === 1) {
+            text(inventory[0][1].name, mouseX-75, mouseY-80, 80, 100);
+            text("+" + inventory[0][0].defense + " Defense",  mouseX-75, mouseY - 20);
+          }
+
+          // Checks what kind of ring is equipped and displays its bonus
+          else {
+            text(inventory[0][2].name, mouseX-75, mouseY-80, 80, 100);
+            if (inventory[0][2].type === "Ring of Health") {
+              text("+" + inventory[0][2].bonusStat + " Health",  mouseX-75, mouseY - 20);
+            }
+
+            else if (inventory[0][2].type === "Ring of Defense") {
+              text("+" + inventory[0][2].bonusStat + " Defense",  mouseX-75, mouseY - 20);
+            }
+
+            else if (inventory[0][2].type === "Ring of Damage") {
+              text("+" + inventory[0][2].bonusStat + " Damage",  mouseX-75, mouseY - 20);
+            }
+          }
         }
         else {
-          text("Ring", mouseX-75, mouseY-80);
+          text("Empty Slot", mouseX-75, mouseY-80, 80, 100);
         }
         pop();
       }
@@ -424,8 +505,7 @@ let blackBag;
 class ItemBag {
   constructor(bagLocation) {
     this.items = [];
-    this.scaler = height/789;
-    this.inventoryCellSize = 50 * this.scaler;  
+    this.inventoryCellSize = 50 * scaler;  
     this.x = bagLocation;
     this.itemDrops();
   }
@@ -455,7 +535,7 @@ class ItemBag {
   displayBag() {
     push();
     imageMode(CENTER);
-    image(redBag, this.x + 40, height*0.6, 80, 80);
+    image(redBag, this.x + 40, height*0.6, 80 * scaler, 80 * scaler);
     pop();
   }
 
@@ -467,10 +547,13 @@ let knightLeft1, knightRight1, knightLeft2, knightRight2, knightStill;
 let character;
 class Player {
   constructor(sprites, inventory) {
-    this.health = 100;
-    // this.health = Infinity; // God Mode for testing
+    this.defaultHealth = 100;
+    this.health = this.defaultHealth;
     this.maxHealth = this.health;
+    // this.health = Infinity; // God Mode for testing
     this.weapon = inventory[0][0];
+    this.armour = inventory[0][1];
+    this.ring = inventory[0][2];
     this.playerDamage = 1 * this.weapon.damage;
     this.enemyKills = 0;
     
@@ -494,7 +577,7 @@ class Player {
     this.x;
     this.y;
 
-
+    this.updateEquipment();
   }
   // Draws Sprite depending on which way you are moving or if you are standing still.
   displaySprite() {
@@ -589,10 +672,34 @@ class Player {
     }
   }
 
-  // Used to update what weapon the character has equipped
-  updateWeapon() {
+  // Used to update what gear the character has equipped
+  updateEquipment() {
     this.weapon = inventory[0][0];
-    this.playerDamage = 1 * this.weapon.damage;
+    this.armour = inventory[0][1];
+    this.ring = inventory[0][2];
+    if (this.ring.type === "Ring of Damage"){
+      this.playerDamage = 1 * this.weapon.damage + this.ring.bonusStat;
+      this.maxHealth = this.defaultHealth;
+      if (this.health >= this.defaultHealth) {
+        this.health = this.defaultHealth;
+      }
+      this.defense = this.armour.defense;
+    }
+
+    else  if (this.ring.type === "Ring of Health"){
+      this.playerDamage = 1 * this.weapon.damage;
+      this.maxHealth = this.defaultHealth + this.ring.bonusStat;
+      this.health = this.health + this.ring.bonusStat;
+      this.defense = this.armour.defense;
+    }
+    else  if (this.ring.type === "Ring of Defense"){
+      this.playerDamage = 1 * this.weapon.damage;
+      this.maxHealth = this.defaultHealth;
+      if (this.health >= this.defaultHealth) {
+        this.health = this.defaultHealth;
+      }
+      this.defense = this.armour.defense + this.ring.bonusStat;
+    }
   }
 }
 
@@ -680,7 +787,7 @@ class Enemy {
       if (character.enemyKills % 2 === 1) {
 
         inventory[0].splice(0, 1, new Sword());
-        character.updateWeapon(); 
+        character.updateEquipment(); 
       }
 
       bags.push(new ItemBag(this.x));
@@ -722,6 +829,14 @@ function preload() {
   sword14 = loadImage("assets/items/swords/weapon14.png");
   sword15 = loadImage("assets/items/swords/weapon15.png");
   sword16 = loadImage("assets/items/swords/weapon16.png");
+  // Armour
+  // armour1 = loadImage();
+  // armour2 = loadImage();
+  // armour3 = loadImage();
+  // Rings
+  ring1 = loadImage("assets/items/rings/defense-ring.png");
+  ring2 = loadImage("assets/items/rings/damage-ring.png");
+  ring3 = loadImage("assets/items/rings/health-ring.png");
   // Sounds
   soundFormats("wav");
   soundEffect1 = loadSound("assets/sounds/attack/attackSound1.wav");
@@ -776,8 +891,12 @@ function setup() {
   weapons.set(weaponsKey[13], sword14);
   weapons.set(weaponsKey[14], sword15);
   weapons.set(weaponsKey[15], sword16);
+
+  rings.set(ringKey[0], ring1);
+  rings.set(ringKey[1], ring2);
+  rings.set(ringKey[2], ring3);
   
-  inventory = [[new Sword(weaponsKey[0]), "armour", "ring"], [" ", " ", " ", " ", " ", " "]];
+  inventory = [[new Sword(weaponsKey[0]), " ", new Ring()], [" ", " ", " ", " ", " ", " "]];
   
   sprites = [knightStill, knightLeft1, knightLeft2, knightRight1, knightRight2];
   character = new Player(sprites, inventory);
@@ -870,58 +989,59 @@ function displayBackground() {
 // First 2 areas. Explains the game and how to play.
 function tutorial() {
   push();
+  let width = 800 * scaler;
   if (areaCounter === 1) {
     fill(158, 158, 158, 200);
-    rect(180, 50, 800, 200, 15);
-    textSize(25);
+    rect(180, 50, width, 200 * scaler, 15);
+    textSize(25 * scaler);
     textAlign(CENTER);
 
     fill("black");
     if( !pressedA || !pressedD || !pressedSPACE) {
-      text("The goal of this game is to run as far as you can.", 180, 80, 800);
-      text("Use A and D to move left and right.", 180, 120, 800);
-      text("Press and Hold SPACE to jump.", 180, 150, 800);
+      text("The goal of this game is to run as far as you can.", 180, 80, width);
+      text("Use A and D to move left and right.", 180, 120, width);
+      text("Press and Hold SPACE to jump.", 180, 150, width);
     }
 
     else{
-      text("Move Right to continue.", 180, 80, 800);
-      text("There is NO turning back.", 180, 120, 800);
-      text("Progress or Death.", 180, 160, 800);
-      text("The Choice is yours.", 180, 190, 800);
+      text("Move Right to continue.", 180, 80, width);
+      text("There is NO turning back.", 180, 120, width);
+      text("Progress or Death.", 180, 160, width);
+      text("The Choice is yours.", 180, 190, width);
     }
   }
   else if (areaCounter === 2) {
 
     fill(158, 158, 158, 200);
-    rect(180, 50, 800, 200, 15);
+    rect(180, 50, width, 200, 15);
     textSize(25);
     textAlign(CENTER);
     fill("black");
     if (inventory[1][0] !== " "){
       sideBar.borderColour = "white";
-      text("Along your journy you will obtain Items.", 180, 80, 800);
-      text("These Items Will appear in your iventory on the right.", 180, 120, 800);
-      text("They will have many uses and can come in quite handy", 180, 160, 800);
-      text("Double Click the health potion to use it", 180, 190, 800);
+      text("Along your journy you will obtain Items.", 180, 80, width);
+      text("These Items Will appear in your iventory on the right.", 180, 120, width);
+      text("They will have many uses and can come in quite handy", 180, 160, width);
+      text("Double Click the health potion to use it", 180, 190, width);
       pressedENTER = false;
     }
     else if (enemies.length > 0 && !pressedENTER) {
       sideBar.borderColour = "black";
-      text("Along your journy you will also encounter Enemies", 180, 80, 800);
-      text("Running into them will damage you.", 180, 130, 800);
-      text("Take too much damage and you will die", 180, 160, 800);
-      text("(Press ENTER to continue)", 180, 200, 800);
+      text("Along your journy you will also encounter Enemies", 180, 80, width);
+      text("Running into them will damage you.", 180, 130, width);
+      text("Take too much damage and you will die", 180, 160, width);
+      text("(Press ENTER to continue)", 180, 200, width);
     }
     else if (enemies.length > 0 && pressedENTER) {
-      text("Walk up to enemies and Left Click to attack.", 180, 80, 800);
-      text("Different Weapons will do more or less damage.", 180, 120, 800);
-      text("Kill all enemies for more items.", 180, 160, 800);
+      text("Walk up to enemies and Left Click to attack.", 180, 80, width);
+      text("Different Weapons will do more or less damage.", 180, 120, width);
+      text("Kill all enemies for more items.", 180, 160, width);
     }
     else {
       character.health = character.maxHealth;
-      text("You are ready to continue.", 180, 80, 800);
-      text("Good luck in your adventures.", 180, 150, 800);
-      text("And remember, there is no turning back", 180, 180, 800);
+      text("You are ready to continue.", 180, 80, width);
+      text("Good luck in your adventures.", 180, 150, width);
+      text("And remember, there is no turning back", 180, 180, width);
     }
   }
   else if (areaCounter === 3) {
