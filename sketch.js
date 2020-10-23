@@ -9,6 +9,9 @@ let backgroundColour;
 let state = "start";
 let areaCounter = 1;
 
+// Scale
+let scaler;
+// Tutorial
 let pressedA = false;
 let pressedD = false;
 let pressedSPACE = false;
@@ -19,11 +22,39 @@ let pressedENTER= false;
 // ITMES
 // Weapons
 
+
 let sword1, sword2, sword3, sword4, sword5, sword6, sword7, sword8, sword9, sword10, sword11, sword12, sword13, sword14, sword15, sword16;
 let weapons = new Map();
 let weaponsKey = ["Stick", "Wooden Sword", "Iron Sword", "Gold Sword", "Fancy Gold Sword", "Cursed Gold Sword", "Crystal Sword", "Enchanted Crystal Sword", "Magma Sword", "Crystal Broad Sword", "Enchanted Crystal Broad Sword", "Feiry Crystal Broad Sword", "Boss Sword 1", "Boss Sword 2", "Boss Sword 3", "Boss Sword 4"];
-weapons.set("Stick", [50, sword1]);
+
 let weaponLevel = 0;
+
+class Sword {
+  constructor(type) {
+    this.name;
+    this.damage;
+    this.sprite;
+    this.durability = 100;
+    this.makeSword(type);
+  }
+
+  makeSword(type) {
+    // ASK ABOUT RARITY IN DROPS/DAMAGE SCALING(EXPONENTIAL DAMAGE CURVE)
+    this.damage = Math.round(random(areaCounter * 25, areaCounter * 75));
+    if (type === undefined) {
+      this.name = weaponsKey[Math.round(random(weaponsKey.length))];
+    }
+    else {
+      this.name === type;
+    }
+    this.sprite = weapons.get(this.name);
+  }
+
+  display(x, y) {
+    image(this.sprite, x, y, 30*scaler, 30 *scaler);
+  }
+
+}
 
 // Potions
 class Potion {
@@ -55,7 +86,7 @@ class Potion {
 
 // inventory[0] is what is equipped inventory[1] and inventory[2] are your inventory
 // inventory[0][0] is weapon, inventory[0][1] is armour, inventory[0][2] is ring 
-let inventory = [[weaponsKey[0], "armour", "ring"], [" ", " ", " ", " ", " ", " "]];
+let inventory;
 let sideBar; 
 class PlayerMenu {
   constructor(sprites) {
@@ -222,7 +253,7 @@ class PlayerMenu {
       let equippedCellY = 300 * this.sideBarScaler;
       // Fills the slot with a color based on weapon equipped. This will eventually get replaced by a sprite but I did not have time to make one.
       imageMode(CENTER);
-      image(weapons.get(inventory[0][0])[1], equippedCellX + this.inventoryCellSize/2, equippedCellY + this.inventoryCellSize/2, 30 * this.sideBarScaler, 30 * this.sideBarScaler);
+      inventory[0][0].display(equippedCellX + this.inventoryCellSize/2, equippedCellY + this.inventoryCellSize/2);
     }
     pop();
     // Armour - haven't added any yet
@@ -433,10 +464,9 @@ class Player {
     this.health = 100;
     // this.health = Infinity; // God Mode for testing
     this.maxHealth = this.health;
-    this.weapon = weapons.get(inventory[0][0]);
-    this.playerDamage = 1 * this.weapon[0];
+    this.weapon = inventory[0][0];
+    this.playerDamage = 1 * this.weapon.damage;
     this.enemyKills = 0;
-    this.equippedWeapon = inventory[0];
     
     
     //sprite managment
@@ -691,6 +721,8 @@ function setup() {
     createCanvas(windowHeight*2 , windowHeight);
   }
 
+  scaler = height/789;
+
   textAlign(CENTER);
   imageMode(CENTER);
   rectMode(CORNER);
@@ -699,28 +731,31 @@ function setup() {
   backgrounds = [background1, background2, background3, background4, background5, background6, background7, background8];
   selectBackgrounds();
   backgroundColour = 0;
+
+  weapons.set(weaponsKey[0], sword1);
+  weapons.set(weaponsKey[1], sword2);
+  weapons.set(weaponsKey[2], sword3);
+  weapons.set(weaponsKey[3], sword4);
+  weapons.set(weaponsKey[4], sword5);
+  weapons.set(weaponsKey[5], sword6);
+  weapons.set(weaponsKey[6], sword7);
+  weapons.set(weaponsKey[7], sword8);
+  weapons.set(weaponsKey[8], sword9);
+  weapons.set(weaponsKey[9], sword10);
+  weapons.set(weaponsKey[10], sword11);
+  weapons.set(weaponsKey[11], sword12);
+  weapons.set(weaponsKey[12], sword13);
+  weapons.set(weaponsKey[13], sword14);
+  weapons.set(weaponsKey[14], sword15);
+  weapons.set(weaponsKey[15], sword16);
+  inventory = [[new Sword(weaponsKey[0]), "armour", "ring"], [" ", " ", " ", " ", " ", " "]];
+  
   sprites = [knightStill, knightLeft1, knightLeft2, knightRight1, knightRight2];
   character = new Player(sprites, inventory);
-  sideBar = new PlayerMenu(sprites);
   character.x = width / 2;
   character.y = height / 2;
 
-  weapons.set("Stick", [50, sword1]);
-  weapons.set("Wooden Sword", [100, sword2]);
-  weapons.set("Iron Sword", [200, sword3]);
-  weapons.set("Gold Sword", [300, sword4]);
-  weapons.set("Fancy Gold Sword", [400, sword5]);
-  weapons.set("Cursed Gold Sword", [500, sword6]);
-  weapons.set("Crystal Sword", [600, sword7]);
-  weapons.set("Enchanted Crystal Sword", [700, sword8]);
-  weapons.set("Magma Sword", [800, sword9]);
-  weapons.set("Crystal Broad Sword", [900, sword10]);
-  weapons.set("Enchanted Crystal Broad Sword", [1000, sword11]);
-  weapons.set("Feiry Crystal Broad Sword", [1100, sword12]);
-  weapons.set("Boss Sword 1", [1300, sword13]);
-  weapons.set("Boss Sword 2", [1400, sword14]);
-  weapons.set("Boss Sword 3", [1500, sword15]);
-  weapons.set("Boss Sword 4", [1600, sword16]);
+  sideBar = new PlayerMenu(sprites);
 }
 
 // Set to run 30 times a second.
