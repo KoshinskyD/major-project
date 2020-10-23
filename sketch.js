@@ -987,6 +987,26 @@ function keyPressed() {
   if (keyCode === 13) {
     pressedENTER = true;
   }
+
+  if (keyCode === 49) {
+    sideBar.useItem(0, "inventory");
+  }
+  if (keyCode === 50) {
+    sideBar.useItem(1, "inventory");
+  }
+  if (keyCode === 51) {
+    sideBar.useItem(2, "inventory");
+  }
+  if (keyCode === 52) {
+    sideBar.useItem(3, "inventory");
+  }
+  if (keyCode === 53) {
+    sideBar.useItem(4, "inventory");
+  }
+  if (keyCode === 54) {
+    sideBar.useItem(5, "inventory");
+  }
+
 }
 
 // Sets movement variables to false based on key release. The handleMovement function then uses these vairables for movement.
