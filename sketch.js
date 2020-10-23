@@ -27,8 +27,6 @@ let sword1, sword2, sword3, sword4, sword5, sword6, sword7, sword8, sword9, swor
 let weapons = new Map();
 let weaponsKey = ["Stick", "Wooden Sword", "Iron Sword", "Gold Sword", "Fancy Gold Sword", "Cursed Gold Sword", "Crystal Sword", "Enchanted Crystal Sword", "Magma Sword", "Crystal Broad Sword", "Enchanted Crystal Broad Sword", "Feiry Crystal Broad Sword", "Boss Sword 1", "Boss Sword 2", "Boss Sword 3", "Boss Sword 4"];
 
-let weaponLevel = 0;
-
 class Sword {
   constructor(type) {
     this.name;
@@ -40,17 +38,23 @@ class Sword {
 
   makeSword(type) {
     // ASK ABOUT RARITY IN DROPS/DAMAGE SCALING(EXPONENTIAL DAMAGE CURVE)
-    this.damage = Math.round(random(areaCounter * 25, areaCounter * 75));
+    this.damage = Math.round(random(areaCounter * 50, areaCounter * 75));
+
+    
     if (type === undefined) {
-      this.name = weaponsKey[Math.round(random(weaponsKey.length))];
+      this.name = weaponsKey[Math.round(random(0, weaponsKey.length-1))];
     }
     else {
-      this.name === type;
+      this.name = type;
+      console.log(type, this.name);  
     }
+
     this.sprite = weapons.get(this.name);
+    console.log(this.sprite);
   }
 
   display(x, y) {
+    
     image(this.sprite, x, y, 30*scaler, 30 *scaler);
   }
 
@@ -84,7 +88,7 @@ class Potion {
   }
 }
 
-// inventory[0] is what is equipped inventory[1] and inventory[2] are your inventory
+// Inventory[0] is what is equipped, inventory[1] is your inventory.
 // inventory[0][0] is weapon, inventory[0][1] is armour, inventory[0][2] is ring 
 let inventory;
 let sideBar; 
@@ -299,8 +303,8 @@ class PlayerMenu {
         push();
         rectMode(CENTER);
         if (j === 0) {
-          text(weaponsKey[weaponLevel], mouseX-75, mouseY-80, 80, 100);
-          text("Damage: " + weapons.get(weaponsKey[weaponLevel])[0],  mouseX-75, mouseY - 20);
+          text(inventory[0][0].name, mouseX-75, mouseY-80, 80, 100);
+          text("Damage: " + inventory[0][0].damage,  mouseX-75, mouseY - 20);
         }
         else if (j === 1) {
           text("Armour", mouseX-75, mouseY-80);
@@ -449,7 +453,7 @@ class ItemBag {
   displayBag() {
     push();
     imageMode(CENTER);
-    image(blackBag, this.x + 40, height*0.6, 80, 80);
+    image(redBag, this.x + 40, height*0.6, 80, 80);
     pop();
   }
 
@@ -537,7 +541,6 @@ class Player {
 
   // Applies gravity and checks if you are on the ground
   applyGravity() {
-    this.playerDamage = 1 * this.weapon[0];
     // Ground Detection
     this.isGrounded = collideLineRect(0 - 50, height * 0.63, width + 30, height * 0.63, this.x, this.y, height/this.hitboxScale, height/this.hitboxScale);
     
@@ -570,6 +573,7 @@ class Player {
   }
 
   attack() {
+    console.log(this.playerDamage);
     ellipse(this.x + height/this.spriteScale / 2, this.y + height/this.spriteScale / 2, 2.5 * height/this.hitboxScale);
     for (let i = 0; i < enemies.length; i++) {
 
@@ -579,6 +583,12 @@ class Player {
         enemies[i].health -= this.playerDamage;
       }
     }
+  }
+
+  // Used to update what weapon the character has equipped
+  updateWeapon() {
+    this.weapon = inventory[0][0];
+    this.playerDamage = 1 * this.weapon.damage;
   }
 }
 
@@ -663,10 +673,10 @@ class Enemy {
     if (this.health <= 0) {
       character.enemyKills++;
       // upgrade your weapon
-      if (character.enemyKills % 2 === 1 && weaponLevel < weaponsKey.length-1) {
-        weaponLevel++;
-        inventory[0].splice(0, 1, weaponsKey[weaponLevel]);
-        character.weapon = weapons.get(inventory[0][0]);
+      if (character.enemyKills % 2 === 1) {
+
+        inventory[0].splice(0, 1, new Sword());
+        character.updateWeapon(); 
       }
 
       bags.push(new ItemBag(this.x));
@@ -748,6 +758,7 @@ function setup() {
   weapons.set(weaponsKey[13], sword14);
   weapons.set(weaponsKey[14], sword15);
   weapons.set(weaponsKey[15], sword16);
+  
   inventory = [[new Sword(weaponsKey[0]), "armour", "ring"], [" ", " ", " ", " ", " ", " "]];
   
   sprites = [knightStill, knightLeft1, knightLeft2, knightRight1, knightRight2];
