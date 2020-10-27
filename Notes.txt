@@ -162,3 +162,7 @@
 // change the iventory from a 2d array with 3 arrays in it, one
 // for each row, to a 2d array with 2 arrays in it, one for the
 // equipment and one for your main inventory slots.
+
+// 9:28/26/10/2020
+// Made it to lvl 30 with 462 kills with no macro
+// Made it to lvl 38 with 716 kills using a macro
