@@ -1,7 +1,8 @@
-
-
-let soundEffect1, soundEffect2, soundEffect3, soundEffect4, soundEffect5, soundEffect6, soundEffect7, soundEffect8;
 let sounds = [];
+let weaponSound1, weaponSound2, weaponSound3, weaponSound4, weaponSound5, weaponSound6, weaponSound7, weaponSound8;
+let walkingSound;
+let musicStartTime = 0;
+let backgroundMusic;
 
 // Background managment.
 let background1, background2, background3, background4, background5, background6, background7, background8;
@@ -64,7 +65,7 @@ class Sword {
 
 let armour1, armour2, armour3;
 let armours = new Map();
-let armourKey = ["armour 1", "armour 2", "armour 3"];
+let armourKey = ["Obsidian Armour", "Fire Armour", "Iron Armour"];
 
 class Armour {
   constructor (type) {
@@ -88,7 +89,7 @@ class Armour {
   }
 
   display(x, y) {
-    image(this.sprite, x, y, 30*scaler, 30 *scaler);
+    image(this.sprite, x, y, 60*scaler, 60 *scaler);
   }
 }
 
@@ -120,7 +121,7 @@ class Ring {
   }
 
   display(x, y) {
-    image(this.sprite, x, y, 30*scaler, 30 *scaler);
+    image(this.sprite, x, y, 60*scaler, 60 *scaler);
   }
 }
 
@@ -323,8 +324,11 @@ class PlayerMenu {
       imageMode(CENTER);
       inventory[0][0].display(this.hotbarCellLocation[0][0] + this.inventoryCellSize/2, this.hotbarCellLocation[0][1] + this.inventoryCellSize/2);
     }
-    // Armour - haven't added any yet
-    // Ring - haven't added any yet
+    // Armour
+    if (inventory[0][1] !== " ") {
+      inventory[0][1].display(this.hotbarCellLocation[1][0] + this.inventoryCellSize/2, this.hotbarCellLocation[1][1] + this.inventoryCellSize/2);
+    }
+    // Ring
     if (inventory[0][2] !== " ") {
       inventory[0][2].display(this.hotbarCellLocation[2][0] + this.inventoryCellSize/2, this.hotbarCellLocation[2][1] + this.inventoryCellSize/2);
     }
@@ -377,7 +381,7 @@ class PlayerMenu {
           // Checks what armour is equipped and displays its info
           else if (j === 1) {
             text(inventory[0][1].name, mouseX-75, mouseY-80, 80, 100);
-            text("+" + inventory[0][0].defense + " Defense",  mouseX-75, mouseY - 20);
+            text("+" + inventory[0][1].defense + " Defense",  mouseX-75, mouseY - 20);
           }
 
           // Checks what kind of ring is equipped and displays its bonus
@@ -597,6 +601,7 @@ class Player {
     this.spriteScale = 9;
     
     // Movement
+    this.isSoundPlaying = false;
     this.isMovingRight = false;
     this.isMovingLeft = false;
     this.isGrounded = false;
@@ -611,7 +616,7 @@ class Player {
 
     this.updateEquipment();
   }
-  // Draws Sprite depending on which way you are moving or if you are standing still.
+  // Draws Sprite depending on which way you are moving or if you are standing still. As well as plays the walking sound
   displaySprite() {
     push();
     imageMode(CORNER);
@@ -653,6 +658,18 @@ class Player {
       else {
         this.isJumping = false;
       }
+    }
+
+
+    // Sound
+    if (this.isMovingLeft && this.isGrounded && this.isSoundPlaying === false || this.isMovingRight && this.isGrounded && this.isSoundPlaying === false){
+      walkingSound.loop();
+      this.isSoundPlaying = true; 
+    }
+
+    else if (!this.isMovingRight && !this.isMovingLeft || !this.isGrounded) {
+      walkingSound.pause();
+      this.isSoundPlaying = false;
     }
   }
 
@@ -807,7 +824,7 @@ class Enemy {
   // Checks if you are coliding with the player
   checkCollision(character) {
     if (this.x <= character.x + 5 && this.x >= character.x - 5 && this.y <= character.y + height/character.hitboxScale) {
-      character.health -= (this.enemyDamage - character.defense);
+      character.health -= this.enemyDamage - character.defense;
     }
   }
 
@@ -816,15 +833,16 @@ class Enemy {
     if (this.health <= 0) {
       character.enemyKills++;
       // upgrade your weapon
-      if (character.enemyKills % 2 === 1) {
-
+      if (Math.round(random(10)) === 1) {
         inventory[0].splice(0, 1, new Sword());
         character.updateEquipment(); 
       }
       if (Math.round(random(10)) === 1) {
         inventory[0].splice(2, 1, new Ring());
       }
-
+      if (Math.round(random(1)) === 1) {
+        inventory[0].splice(1, 1, new Armour());
+      }
       bags.push(new ItemBag(this.x));
       return true;
     }
@@ -865,24 +883,25 @@ function preload() {
   sword15 = loadImage("assets/items/swords/weapon15.png");
   sword16 = loadImage("assets/items/swords/weapon16.png");
   // Armour
-  // armour1 = loadImage();
-  // armour2 = loadImage();
-  // armour3 = loadImage();
+  armour1 = loadImage("assets/items/armour/armour1.png");
+  armour2 = loadImage("assets/items/armour/armour2.png");
+  armour3 = loadImage("assets/items/armour/armour3.png");
   // Rings
   ring1 = loadImage("assets/items/rings/defense-ring.png");
   ring2 = loadImage("assets/items/rings/damage-ring.png");
   ring3 = loadImage("assets/items/rings/health-ring.png");
   // Sounds
-  soundFormats("wav");
-  soundEffect1 = loadSound("assets/sounds/attack/attackSound1.wav");
-  soundEffect2 = loadSound("assets/sounds/attack/attackSound2.wav");
-  soundEffect3 = loadSound("assets/sounds/attack/attackSound3.wav");
-  soundEffect4 = loadSound("assets/sounds/attack/attackSound4.wav");
-  soundEffect5 = loadSound("assets/sounds/attack/attackSound5.wav");
-  soundEffect6 = loadSound("assets/sounds/attack/attackSound6.wav");
-  soundEffect7 = loadSound("assets/sounds/attack/attackSound7.wav");
-  soundEffect8 = loadSound("assets/sounds/attack/attackSound8.wav");
-
+  soundFormats("wav", "mp3");
+  weaponSound1 = loadSound("assets/sounds/attack/attackSound1.wav");
+  weaponSound2 = loadSound("assets/sounds/attack/attackSound2.wav");
+  weaponSound3 = loadSound("assets/sounds/attack/attackSound3.wav");
+  weaponSound4 = loadSound("assets/sounds/attack/attackSound4.wav");
+  weaponSound5 = loadSound("assets/sounds/attack/attackSound5.wav");
+  weaponSound6 = loadSound("assets/sounds/attack/attackSound6.wav");
+  weaponSound7 = loadSound("assets/sounds/attack/attackSound7.wav");
+  weaponSound8 = loadSound("assets/sounds/attack/attackSound8.wav");
+  walkingSound = loadSound("assets/sounds/walking/walking.wav");
+  backgroundMusic = loadSound("assets/sounds/backgroundMusic.mp3");
   // Bags
   redBag = loadImage("assets/bags/redBag.png"); 
   blackBag = loadImage("assets/bags/blackBag.png");  
@@ -899,6 +918,7 @@ function setup() {
 
   scaler = height/789;
 
+
   textAlign(CENTER);
   imageMode(CENTER);
   rectMode(CORNER);
@@ -908,7 +928,15 @@ function setup() {
   selectBackgrounds();
   backgroundColour = 0;
 
-  sounds = [soundEffect1, soundEffect2, soundEffect3, soundEffect4, soundEffect5, soundEffect6, soundEffect7, soundEffect8];
+  sounds = [weaponSound1, weaponSound2, weaponSound3, weaponSound4, weaponSound5, weaponSound6, weaponSound7, weaponSound8];
+
+  
+  // Volumes
+  walkingSound.setVolume(0.2);
+  backgroundMusic.setVolume(0.2);
+  for (let i = 0; i < sounds.length; i++) {
+    sounds[i].setVolume(0.5);
+  }
 
   weapons.set(weaponsKey[0], sword1);
   weapons.set(weaponsKey[1], sword2);
@@ -927,11 +955,16 @@ function setup() {
   weapons.set(weaponsKey[14], sword15);
   weapons.set(weaponsKey[15], sword16);
 
+  armours.set(armourKey[0], armour1);
+  armours.set(armourKey[1], armour2);
+  armours.set(armourKey[2], armour3);
+
+
   rings.set(ringKey[0], ring1);
   rings.set(ringKey[1], ring2);
   rings.set(ringKey[2], ring3);
   
-  inventory = [[new Sword(weaponsKey[0]), " ", new Ring()], [" ", " ", " ", " ", " ", " "]];
+  inventory = [[new Sword(weaponsKey[0]), new Armour(armourKey[0]), new Ring()], [" ", " ", " ", " ", " ", " "]];
   
   sprites = [knightStill, knightLeft1, knightLeft2, knightRight1, knightRight2];
   character = new Player(sprites, inventory);
@@ -949,11 +982,8 @@ function draw() {
   else if (state === "play") {
     clear();
     displayBackground();
-    
-    // Uncomment next 2 lines to show character and ground hitbox.
-    // rect(character.x, character.y, height/hitboxScale, height/hitboxScale);
-    // line(0 - 10, height * 0.63, width + 10, height * 0.63);
-    
+    playBackgroundMusic();
+
     // Draws and moves sprite.
     character.displaySprite();
     character.handleMovement();
@@ -1015,9 +1045,20 @@ function selectBackgrounds() {
 
 // Displays the bacground image.
 function displayBackground() {
-  
   for (let i = 0; i < Math.ceil(width / height); i++) {
     image(backgrounds[backgroundSelection[i]], height / 2 + height * i, height/2, height, height);
+  }
+}
+
+// Plays the background music you hear while in the play state
+function playBackgroundMusic() {
+  if (millis() - musicStartTime >= 63372) {
+    backgroundMusic.play();
+    musicStartTime = millis();
+  }
+  else if(musicStartTime === 0) {
+    backgroundMusic.play();
+    musicStartTime = millis();
   }
 }
 
@@ -1042,7 +1083,6 @@ function tutorial() {
       text("Move Right to continue.", 180, 80, width);
       text("There is NO turning back.", 180, 120, width);
       text("Progress or Death.", 180, 160, width);
-      text("The Choice is yours.", 180, 190, width);
     }
   }
   else if (areaCounter === 2) {
