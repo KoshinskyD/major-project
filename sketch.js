@@ -24,10 +24,7 @@ let pressedENTER= false;
 
 
 // Inventory
-// ITMES
 // Weapons
-
-
 let sword1, sword2, sword3, sword4, sword5, sword6, sword7, sword8, sword9, sword10, sword11, sword12, sword13, sword14, sword15, sword16;
 let weapons = new Map();
 let weaponsKey = ["Stick", "Wooden Sword", "Iron Sword", "Gold Sword", "Fancy Gold Sword", "Cursed Gold Sword", "Crystal Sword", "Enchanted Crystal Sword", "Magma Sword", "Crystal Broad Sword", "Enchanted Crystal Broad Sword", "Feiry Crystal Broad Sword", "Boss Sword 1", "Boss Sword 2", "Boss Sword 3", "Boss Sword 4"];
@@ -63,6 +60,7 @@ class Sword {
 
 }
 
+// Armours
 let armour1, armour2, armour3;
 let armours = new Map();
 let armourKey = ["Obsidian Armour", "Fire Armour", "Iron Armour"];
@@ -93,6 +91,7 @@ class Armour {
   }
 }
 
+// Rings
 let ring1, ring2, ring3;
 let rings = new Map();
 let ringKey = ["Ring of Health", "Ring of Defense", "Ring of Damage"];
