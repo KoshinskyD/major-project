@@ -1,13 +1,14 @@
 # Project Reflection
 
 ## Favourite Parts
-I am happy that I was able to finish my need to have list however I feel that this game is still lacking in many ways and is far from complete.
+I am happy that I was able to finish my need to have list however I feel that this game is still lacking in many ways and is far from complete. There are many changes I would make if I had the time and much more I had hoped to add but simply did not have the time for.
 
 ## Most challenging parts
 - Inventory
 - Item Drops
 
 ## Changes if I had more time
+- Add an attack animation
 - Rework movement
 - Rework Attacking
 - Better allign the player when the game starts 
