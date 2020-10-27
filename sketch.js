@@ -959,7 +959,6 @@ function setup() {
   armours.set(armourKey[1], armour2);
   armours.set(armourKey[2], armour3);
 
-
   rings.set(ringKey[0], ring1);
   rings.set(ringKey[1], ring2);
   rings.set(ringKey[2], ring3);
@@ -968,10 +967,11 @@ function setup() {
   
   sprites = [knightStill, knightLeft1, knightLeft2, knightRight1, knightRight2];
   character = new Player(sprites, inventory);
+  sideBar = new PlayerMenu(sprites);
+
   character.x = width / 2;
   character.y = height / 2;
 
-  sideBar = new PlayerMenu(sprites);
 }
 
 // Set to run 30 times a second.
