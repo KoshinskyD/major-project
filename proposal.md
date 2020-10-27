@@ -14,7 +14,7 @@ For my major project I plan to make a 2d scroller
 - ~~Movement~~
 - ~~Instructions~~
 - ~~Weapon, Armour, Ring~~
-- Sound
+- ~~Sound~~
 
 ## Nice to have list
 
@@ -22,8 +22,8 @@ For my major project I plan to make a 2d scroller
 - Starting Cutscene
 - Attack Animation
 - Multiple Characters to choose from
-- Multiple Items (weapons, armours, rings)
-- Multiple Consumables (sheilds, damage boosts, poisons)
+- ~~Multiple Items (weapons, armours, rings)~~
+- ~~Multiple Consumables (sheilds, damage boosts, poisons)~~
 - Boss Fights
 - Different inventory fucntionality
     - ~~Item info displayed when you hover over it~~
