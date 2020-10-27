@@ -887,9 +887,9 @@ function preload() {
   armour2 = loadImage("assets/items/armour/armour2.png");
   armour3 = loadImage("assets/items/armour/armour3.png");
   // Rings
-  ring1 = loadImage("assets/items/rings/defense-ring.png");
-  ring2 = loadImage("assets/items/rings/damage-ring.png");
-  ring3 = loadImage("assets/items/rings/health-ring.png");
+  ring1 = loadImage("assets/items/rings/health-ring.png");
+  ring2 = loadImage("assets/items/rings/defense-ring.png");
+  ring3 = loadImage("assets/items/rings/damage-ring.png");
   // Sounds
   soundFormats("wav", "mp3");
   weaponSound1 = loadSound("assets/sounds/attack/attackSound1.wav");
@@ -964,7 +964,7 @@ function setup() {
   rings.set(ringKey[1], ring2);
   rings.set(ringKey[2], ring3);
   
-  inventory = [[new Sword(weaponsKey[0]), new Armour(armourKey[0]), new Ring()], [" ", " ", " ", " ", " ", " "]];
+  inventory = [[new Sword(weaponsKey[0]), new Armour(armourKey[2]), new Ring()], [" ", " ", " ", " ", " ", " "]];
   
   sprites = [knightStill, knightLeft1, knightLeft2, knightRight1, knightRight2];
   character = new Player(sprites, inventory);
